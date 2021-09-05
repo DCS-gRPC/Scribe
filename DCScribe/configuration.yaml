@@ -17,3 +17,20 @@ Serilog:
       Name: File
       Args:
         path: logs/dcscribe.log
+GameServers:
+  - 
+    # Replace the following example fields with those used by your server and database
+    Name: Syria At War
+    # Used in discord commands so keep this unique across your gameservers
+    ShortName: SAW
+    Database:
+      # Make sure you set your pg_hba.conf file if you are not connecting over localhost
+      # https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
+      Host: gaw.hoggitworld.com
+      Port: 5432
+      Name: georgia_at_war
+      Username: dcscribe
+      Password: database-password
+    Rpc:
+      Host: gaw.hoggitworld.com
+      Port: 50051

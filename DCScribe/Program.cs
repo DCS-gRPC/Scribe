@@ -2,6 +2,7 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RurouniJones.DCScribe.Core;
 using Serilog;
 
 namespace RurouniJones.DCScribe
@@ -23,7 +24,7 @@ namespace RurouniJones.DCScribe
             try
             {
                 Log.Information("Starting DCScribe");
-                CreateHostBuilder(args).Build().Run();
+                CreateHostBuilder(args, configuration).Build().Run();
             }
             catch (Exception ex)
             {
@@ -36,12 +37,16 @@ namespace RurouniJones.DCScribe
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args, IConfigurationRoot config)
         {
             return Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
+                    services.AddSingleton<ScribeFactory>();
+                    services.AddTransient<Scribe>();
+                    services.Configure<Configuration>(config);
+                    services.AddOptions();
                 })
                 .UseSerilog()
                 .UseWindowsService();
