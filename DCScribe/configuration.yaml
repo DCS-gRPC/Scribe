@@ -1,0 +1,19 @@
+﻿---
+# The following setup is for the logging system. For information on how to change this
+# see 
+Serilog:
+  Using:
+  MinimumLevel: 
+    Default: Information
+  Override: 
+    Microsoft: Warning
+    System: Warning
+  Enrich:
+    - FromLogContext
+    - WithProcessId
+    - WithThreadId
+  WriteTo:
+    -
+      Name: File
+      Args:
+        path: logs/dcscribe.log
