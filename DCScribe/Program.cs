@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RurouniJones.DCScribe.Core;
+using RurouniJones.DCScribe.Core.Clients;
 using Serilog;
 
 namespace RurouniJones.DCScribe
@@ -45,6 +46,8 @@ namespace RurouniJones.DCScribe
                     services.AddHostedService<Worker>();
                     services.AddSingleton<ScribeFactory>();
                     services.AddTransient<Scribe>();
+                    services.AddTransient<IRpcClient, RpcClient>();
+                    services.AddTransient<IDatabaseClient, DatabaseClient>();
                     services.Configure<Configuration>(config);
                     services.AddOptions();
                 })
