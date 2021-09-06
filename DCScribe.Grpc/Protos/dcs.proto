@@ -1,0 +1,15 @@
+syntax = "proto3";
+option csharp_namespace = "RurouniJones.DCScribe.Grpc";
+
+import "mission.proto";
+
+package dcs;
+
+service Mission {
+	// Streams DCS game generated Events.
+	// See https://wiki.hoggitworld.com/view/Category:Events
+	rpc StreamEvents(StreamEventsRequest) returns (stream Event) {}
+
+	// Streams unit updates
+	rpc StreamUnits(StreamUnitsRequest) returns (stream UnitUpdate) {}
+}

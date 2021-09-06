@@ -48,7 +48,7 @@ namespace RurouniJones.DCScribe.Core
                 
                 // Clear the database and units as we start from scratch each time around
                 _databaseClient.ClearTableAsync();
-                var units = new ConcurrentDictionary<int, Unit>();
+                var units = new ConcurrentDictionary<uint, Unit>();
 
                 /*
                  * A queue containing all the unit updates to be processed. We populate
@@ -74,12 +74,11 @@ namespace RurouniJones.DCScribe.Core
             }
         }
 
-        private async Task ProcessQueue(ConcurrentQueue<Unit> queue, ConcurrentDictionary<int, Unit> units,
+        private static async Task ProcessQueue(ConcurrentQueue<Unit> queue, ConcurrentDictionary<uint, Unit> units,
             CancellationToken scribeToken)
         {
             while (!scribeToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Processing Queue at {time}", DateTimeOffset.Now);
                 queue.TryDequeue(out var unit);
                 if (unit == null)
                 {
@@ -87,15 +86,22 @@ namespace RurouniJones.DCScribe.Core
                     continue;
                 }
 
-                units[unit.Id] = unit;
+                if (unit.Deleted)
+                {
+                    units[unit.Id].Deleted = true;
+                }
+                else
+                {
+                    units[unit.Id] = unit;
+                }
             }
         }
 
-        private async Task WriteToDatabaseAsync(ConcurrentDictionary<int, Unit> units, CancellationToken scribeToken)
+        private async Task WriteToDatabaseAsync(ConcurrentDictionary<uint, Unit> units, CancellationToken scribeToken)
         {
             while (!scribeToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Writing to database at {time}", DateTimeOffset.Now);
+                _logger.LogInformation("Writing {count} units to database at {time}",units.Count, DateTimeOffset.Now);
                 _databaseClient.WriteAsync(units.Values.ToList());
                 await Task.Delay(1000, scribeToken);
             }

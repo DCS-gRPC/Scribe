@@ -20,17 +20,36 @@ Serilog:
 GameServers:
   - 
     # Replace the following example fields with those used by your server and database
-    Name: Syria At War
+    Name: RurouniJones Bestest Server
     # Used in discord commands so keep this unique across your gameservers
-    ShortName: SAW
+    ShortName: RBS
     Database:
       # Make sure you set your pg_hba.conf file if you are not connecting over localhost
       # https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
-      Host: gaw.hoggitworld.com
+      Host: rbs.example.com
       Port: 5432
-      Name: georgia_at_war
+      Name: rbs_database
       Username: dcscribe
-      Password: database-password
+      Password: this_is_a_password
     Rpc:
-      Host: gaw.hoggitworld.com
+      Host: rbs.example.com
+      # This is the default port
+      Port: 50051
+  # You can specify multiple game servers and have one DCScribe instance handle all of them
+  - 
+    # Replace the following example fields with those used by your server and database
+    Name: RurouniJones Worstest Server
+    # Used in discord commands so keep this unique across your gameservers
+    ShortName: RWS
+    Database:
+      # Make sure you set your pg_hba.conf file if you are not connecting over localhost
+      # https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
+      Host: rws.example.com
+      Port: 5432
+      Name: rws_database
+      Username: dcscribe
+      Password: this_is_a_password
+    Rpc:
+      Host: rws.example.com
+      # This is the default port
       Port: 50051

@@ -24,6 +24,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DCScribe.Grpc\DCScribe.Grpc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.md" Link="LICENSE.md">
+      <PackagePath></PackagePath>
+      <Pack>True</Pack>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="configuration.Development.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
