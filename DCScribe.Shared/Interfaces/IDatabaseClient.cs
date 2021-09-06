@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using RurouniJones.DCScribe.Shared.Models;
 
 namespace RurouniJones.DCScribe.Shared.Interfaces
@@ -11,8 +13,10 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
         string Username { get; set; }
         string Password { get; set; }
 
-        void ClearTableAsync();
+        Task ClearTableAsync();
 
-        void WriteAsync(List<Unit> units);
+        Task UpdateUnitsAsync(List<Unit> units, CancellationToken scribeToken);
+
+        Task DeleteUnitsAsync(List<uint> units, CancellationToken scribeToken);
     }
 }

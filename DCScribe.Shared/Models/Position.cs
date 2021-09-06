@@ -2,17 +2,15 @@
 
 namespace RurouniJones.DCScribe.Shared.Models
 {
-    public class Location
+    public class Position
     {
         public double Latitude { get; }
         public double Longitude { get; }
-        public double Altitude { get; }
 
-        public Location(double latitude, double longitude, double altitude)
+        public Position(double latitude, double longitude)
         {
             Latitude = Math.Min(Math.Max(latitude, -90.0), 90.0);
             Longitude = longitude;
-            Altitude = altitude;
         }
     }
 }

@@ -41,14 +41,19 @@ namespace RurouniJones.DCScribe.Core
             _rpcClient.HostName = GameServer.Rpc.Host;
             _rpcClient.Port = GameServer.Rpc.Port;
 
+            _databaseClient.Host = GameServer.Database.Host;
+            _databaseClient.Port = GameServer.Database.Port;
+            _databaseClient.Name = GameServer.Database.Name;
+            _databaseClient.Username = GameServer.Database.Username;
+            _databaseClient.Password = GameServer.Database.Password;
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 var scribeTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
                 var scribeToken = scribeTokenSource.Token;
                 
-                // Clear the database and units as we start from scratch each time around
-                _databaseClient.ClearTableAsync();
-                var units = new ConcurrentDictionary<uint, Unit>();
+                // Clear the database as we start from scratch each time around
+                await _databaseClient.ClearTableAsync();
 
                 /*
                  * A queue containing all the unit updates to be processed. We populate
@@ -63,8 +68,7 @@ namespace RurouniJones.DCScribe.Core
                 var tasks = new List<Task>
                 {
                     _rpcClient.ExecuteAsync(scribeToken), // Get the events and put them into the queue
-                    ProcessQueue(queue, units, scribeToken), // Process the queue events into the units dictionary
-                    WriteToDatabaseAsync(units, scribeToken) // Periodically write the units to the database
+                    ProcessQueue(queue, scribeToken), // Process the queue events into the units dictionary
                 };
 
                 await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets disconnected on
@@ -74,9 +78,12 @@ namespace RurouniJones.DCScribe.Core
             }
         }
 
-        private static async Task ProcessQueue(ConcurrentQueue<Unit> queue, ConcurrentDictionary<uint, Unit> units,
-            CancellationToken scribeToken)
+        private async Task ProcessQueue(ConcurrentQueue<Unit> queue, CancellationToken scribeToken)
         {
+            var unitsToUpdate = new ConcurrentDictionary<uint, Unit>();
+            var unitsToDelete = new List<uint>();
+            var startTime = DateTime.UtcNow;
+
             while (!scribeToken.IsCancellationRequested)
             {
                 queue.TryDequeue(out var unit);
@@ -88,23 +95,52 @@ namespace RurouniJones.DCScribe.Core
 
                 if (unit.Deleted)
                 {
-                    units[unit.Id].Deleted = true;
+                    unitsToDelete.Add(unit.Id);
                 }
                 else
                 {
-                    units[unit.Id] = unit;
+                    unitsToUpdate[unit.Id] = unit;
+                }
+
+                if (!((DateTime.UtcNow - startTime).TotalMilliseconds > 2000)) continue;
+                // Every X seconds we will write the accumulated data to the database
+                try
+                {
+                    if (unitsToUpdate.Count > 0)
+                    {
+                        var updates = new Unit[unitsToUpdate.Count];
+                        unitsToUpdate.Values.CopyTo(updates, 0);
+                        await UpdateUnitsAsync(updates.ToList(), scribeToken);
+                    }
+
+                    if (unitsToDelete.Count > 0)
+                    {
+                        var deletions = new uint[unitsToDelete.Count];
+                        unitsToDelete.CopyTo(deletions, 0);
+                        await DeleteUnitsAsync(deletions.ToList(), scribeToken);
+                    }
+                    // Then clear the updates and start again
+                    unitsToUpdate = new ConcurrentDictionary<uint, Unit>();
+                    unitsToDelete = new List<uint>();
+                    startTime = DateTime.UtcNow;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error processing queue");
                 }
             }
         }
 
-        private async Task WriteToDatabaseAsync(ConcurrentDictionary<uint, Unit> units, CancellationToken scribeToken)
+        private async Task UpdateUnitsAsync(List<Unit> units, CancellationToken scribeToken)
         {
-            while (!scribeToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Writing {count} units to database at {time}",units.Count, DateTimeOffset.Now);
-                _databaseClient.WriteAsync(units.Values.ToList());
-                await Task.Delay(1000, scribeToken);
-            }
+            _logger.LogInformation("Writing\t {count} \t unit(s) to database at\t\t {time}",units.Count, DateTimeOffset.Now);
+            await _databaseClient.UpdateUnitsAsync(units, scribeToken);
+        }
+
+        private async Task DeleteUnitsAsync(List<uint> ids, CancellationToken scribeToken)
+        {
+            _logger.LogInformation("Deleting\t {count} \t unit(s) from database at\t {time}",ids.Count, DateTimeOffset.Now);
+            await _databaseClient.DeleteUnitsAsync(ids, scribeToken);
         }
     }
 }
