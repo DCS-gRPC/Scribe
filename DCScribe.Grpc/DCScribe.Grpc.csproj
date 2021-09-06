@@ -31,4 +31,8 @@
     <None Remove="Protos\mission.proto" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DCScribe.Shared\DCScribe.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

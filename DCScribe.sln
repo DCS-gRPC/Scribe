@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.31605.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DCScribe", "DCScribe\DCScribe.csproj", "{03F22573-3C03-477F-99FE-91EFE1FCF7F6}"
 	ProjectSection(ProjectDependencies) = postProject
+		{331A0FA4-8C38-4BEA-B9CB-6A02B225FAB8} = {331A0FA4-8C38-4BEA-B9CB-6A02B225FAB8}
+		{F37A95F3-00DA-4AA5-BC49-10BDB8A45FAD} = {F37A95F3-00DA-4AA5-BC49-10BDB8A45FAD}
 		{589285F5-928E-4879-9F5C-107000FC06A4} = {589285F5-928E-4879-9F5C-107000FC06A4}
 	EndProjectSection
 EndProject
@@ -17,6 +19,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCScribe.Grpc", "DCScribe.Grpc\DCScribe.Grpc.csproj", "{589285F5-928E-4879-9F5C-107000FC06A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCScribe.Postgres", "DCScribe.Postgres\DCScribe.Postgres.csproj", "{F37A95F3-00DA-4AA5-BC49-10BDB8A45FAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCScribe.Shared", "DCScribe.Shared\DCScribe.Shared.csproj", "{331A0FA4-8C38-4BEA-B9CB-6A02B225FAB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +38,14 @@ Global
 		{589285F5-928E-4879-9F5C-107000FC06A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{589285F5-928E-4879-9F5C-107000FC06A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{589285F5-928E-4879-9F5C-107000FC06A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F37A95F3-00DA-4AA5-BC49-10BDB8A45FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F37A95F3-00DA-4AA5-BC49-10BDB8A45FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F37A95F3-00DA-4AA5-BC49-10BDB8A45FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F37A95F3-00DA-4AA5-BC49-10BDB8A45FAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{331A0FA4-8C38-4BEA-B9CB-6A02B225FAB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{331A0FA4-8C38-4BEA-B9CB-6A02B225FAB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{331A0FA4-8C38-4BEA-B9CB-6A02B225FAB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{331A0FA4-8C38-4BEA-B9CB-6A02B225FAB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,20 +4,19 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
-using RurouniJones.DCScribe.Grpc;
-using Unit = RurouniJones.DCScribe.Core.Models.Unit;
+using RurouniJones.DCScribe.Shared.Interfaces;
 
-namespace RurouniJones.DCScribe.Core.Clients
+namespace RurouniJones.DCScribe.Grpc
 {
     public class RpcClient : IRpcClient
     {
-        public ConcurrentQueue<Unit> UpdateQueue { get; set; }
+        public ConcurrentQueue<Shared.Models.Unit> UpdateQueue { get; set; }
 
         public string HostName { get; set; }
         public int Port { get; set; }
 
-        private readonly ILogger<Scribe> _logger;
-        public RpcClient(ILogger<Scribe> logger)
+        private readonly ILogger<RpcClient> _logger;
+        public RpcClient(ILogger<RpcClient> logger)
         {
             _logger = logger;
         }
@@ -40,32 +39,32 @@ namespace RurouniJones.DCScribe.Core.Clients
                         break;
                     case UnitUpdate.UpdateOneofCase.Unit:
                         var sourceUnit = update.Unit;
-                        UpdateQueue.Enqueue(new Unit
+                        UpdateQueue.Enqueue(new Shared.Models.Unit
                         {
                             Coalition = (int) sourceUnit.Coalition,
                             Id = sourceUnit.Id,
                             Name = sourceUnit.Name,
-                            Location = new  Models.Location(sourceUnit.Position.Lat, sourceUnit.Position.Lon, sourceUnit.Position.Alt),
+                            Location = new Shared.Models.Location(sourceUnit.Position.Lat, sourceUnit.Position.Lon, sourceUnit.Position.Alt),
                             Pilot = sourceUnit.Callsign,
                             Type = sourceUnit.Type,
                             Player = sourceUnit.PlayerName,
                             GroupName = sourceUnit.GroupName,
                             Deleted = false
                         });
-                        _logger.LogWarning("Enqueue unit update {unit}", sourceUnit);
+                        _logger.LogInformation("Enqueue unit update {unit}", sourceUnit);
                         break;
                     case UnitUpdate.UpdateOneofCase.Gone:
                         var deletedUnit = update.Gone;
-                        UpdateQueue.Enqueue(new Unit
+                        UpdateQueue.Enqueue(new Shared.Models.Unit
                         {
                             Id = deletedUnit.Id,
                             Name = deletedUnit.Name,
                             Deleted = true
                         });
-                        _logger.LogWarning("Enqueue unit deletion {unit}", deletedUnit);
+                        _logger.LogInformation("Enqueue unit deletion {unit}", deletedUnit);
                         break;
                     default:
-                        _logger.LogWarning("Unexpected UnitUpdate case of {case}", update.UpdateCase);
+                        _logger.LogInformation("Unexpected UnitUpdate case of {case}", update.UpdateCase);
                         break;
                 }
             }

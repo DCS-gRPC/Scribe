@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using RurouniJones.DCScribe.Core.Models;
+using RurouniJones.DCScribe.Shared.Models;
 
-namespace RurouniJones.DCScribe.Core.Clients
+namespace RurouniJones.DCScribe.Shared.Interfaces
 {
     public interface IDatabaseClient
     {

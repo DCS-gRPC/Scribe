@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DCScribe.Grpc\DCScribe.Grpc.csproj" />
+    <ProjectReference Include="..\DCScribe.Postgres\DCScribe.Postgres.csproj" />
+    <ProjectReference Include="..\DCScribe.Shared\DCScribe.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

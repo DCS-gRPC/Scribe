@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using RurouniJones.DCScribe.Core.Clients;
-using RurouniJones.DCScribe.Core.Models;
+using RurouniJones.DCScribe.Shared.Interfaces;
+using RurouniJones.DCScribe.Shared.Models;
 
 namespace RurouniJones.DCScribe.Core
 {

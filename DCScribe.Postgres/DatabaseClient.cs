@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using RurouniJones.DCScribe.Core.Models;
+using RurouniJones.DCScribe.Shared.Interfaces;
+using RurouniJones.DCScribe.Shared.Models;
 
-namespace RurouniJones.DCScribe.Core.Clients
+namespace RurouniJones.DCScribe.Postgres
 {
     public class DatabaseClient : IDatabaseClient
     {
@@ -12,15 +13,14 @@ namespace RurouniJones.DCScribe.Core.Clients
         public string Username { get; set; }
         public string Password { get; set; }
 
-        private readonly ILogger<Scribe> _logger;
-        public DatabaseClient(ILogger<Scribe> logger)
+        private readonly ILogger<DatabaseClient> _logger;
+        public DatabaseClient(ILogger<DatabaseClient> logger)
         {
             _logger = logger;
         }
 
         public void ClearTableAsync()
         {
-
         }
 
 

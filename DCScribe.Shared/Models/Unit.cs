@@ -1,4 +1,4 @@
-﻿namespace RurouniJones.DCScribe.Core.Models
+﻿namespace RurouniJones.DCScribe.Shared.Models
 {
     public class Unit
     {

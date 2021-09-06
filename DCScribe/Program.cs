@@ -3,8 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RurouniJones.DCScribe.Core;
-using RurouniJones.DCScribe.Core.Clients;
+using RurouniJones.DCScribe.Grpc;
+using RurouniJones.DCScribe.Postgres;
+using RurouniJones.DCScribe.Shared.Interfaces;
 using Serilog;
+using Configuration = RurouniJones.DCScribe.Core.Configuration;
 
 namespace RurouniJones.DCScribe
 {
