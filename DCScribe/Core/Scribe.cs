@@ -47,11 +47,12 @@ namespace RurouniJones.DCScribe.Core
             _databaseClient.Username = GameServer.Database.Username;
             _databaseClient.Password = GameServer.Database.Password;
 
+            _logger.LogInformation("{server} Scribe Processing starting", GameServer.ShortName);
             while (!stoppingToken.IsCancellationRequested)
             {
                 var scribeTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
                 var scribeToken = scribeTokenSource.Token;
-                
+
                 // Clear the database as we start from scratch each time around
                 await _databaseClient.ClearTableAsync();
 
@@ -65,16 +66,30 @@ namespace RurouniJones.DCScribe.Core
                 var queue = new ConcurrentQueue<Unit>();
                 _rpcClient.UpdateQueue = queue;
 
-                var tasks = new List<Task>
+                var tasks = new[]
                 {
                     _rpcClient.ExecuteAsync(scribeToken), // Get the events and put them into the queue
                     ProcessQueue(queue, scribeToken), // Process the queue events into the units dictionary
                 };
-
-                await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets disconnected on
-                                           // mission restart
+                await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets
+                                           // disconnected on mission restart
+                _logger.LogInformation("{server} Scribe Processing stopping", GameServer.ShortName);
                 scribeTokenSource.Cancel(); // Then cancel all of the other tasks
-                await Task.WhenAll(tasks); // Then we wait for all of them to finish before starting the loop again
+                // Then we wait for all of them to finish before starting the loop again.
+                try
+                {
+                    await Task.WhenAll(tasks);
+                }
+                catch (Exception)
+                {
+                    // No-op. Exceptions have already been logged in the task
+                }
+
+                _logger.LogInformation("{server} Scribe Processing stopped", GameServer.ShortName);
+
+                // Wait before trying again unless the entire service is shutting down.
+                await Task.Delay((int)TimeSpan.FromSeconds(10).TotalMilliseconds, stoppingToken);
+                _logger.LogInformation("{server} Scribe Processing restarting", GameServer.ShortName);
             }
         }
 
