@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using NetTopologySuite.Geometries;
 using Npgsql;
 using RurouniJones.DCScribe.Shared.Interfaces;
+using RurouniJones.DCScribe.Shared.Models;
 
 namespace RurouniJones.DCScribe.Postgres
 {
@@ -33,7 +34,7 @@ namespace RurouniJones.DCScribe.Postgres
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task UpdateUnitsAsync(List<Shared.Models.Unit> units, CancellationToken scribeToken)
+        public async Task UpdateUnitsAsync(List<Unit> units, CancellationToken scribeToken)
         {
             try
             {
@@ -43,12 +44,18 @@ namespace RurouniJones.DCScribe.Postgres
 
                 await using var command = new NpgsqlCommand(
                 @"INSERT INTO units (id, ""position"", altitude, type, name, callsign, player, group_name,
-                        coalition, heading, speed, updated_at)
-                        SELECT * FROM unnest(@i, @l, @a, @t, @n, @pi, @pl, @g, @c, @h, @s, @u)
+                        coalition, heading, speed, updated_at, context, standard_identity, symbol_set, status,
+                        hqtf_dummy, amplifier, entity, entity_type, entity_sub_type, sector_one_modifier,
+                        sector_two_modifier)
+                        SELECT * FROM unnest(@i, @l, @a, @t, @n, @pi, @pl, @g, @c, @h, @s, @u, @sc, @si, @ss, @st,
+                        @sh, @sa, @se, @sf, @sg, @so, @sp)
                         ON CONFLICT ON CONSTRAINT units_pkey
                         DO UPDATE SET ""position"" = EXCLUDED.position, altitude = EXCLUDED.altitude, 
                         heading = EXCLUDED.heading, speed = EXCLUDED.speed, updated_at = EXCLUDED.updated_at", conn);
 
+                /*
+                 * The following fields come directly from DCS
+                 */
                 command.Parameters.Add(new NpgsqlParameter<int[]>("i", units.Select(e =>
                     (int) e.Id).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<Point[]>("l", units.Select(e =>
@@ -74,6 +81,31 @@ namespace RurouniJones.DCScribe.Postgres
                 command.Parameters.Add(new NpgsqlParameter<DateTime[]>("u", units.Select(e =>
                     DateTime.UtcNow).ToArray()));
 
+                /*
+                 * The following fields are calculated using MilStd-2525D based on the unit
+                 */
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sc", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Context)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("si", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).StandardIdentity)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("ss", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).SymbolSet)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("st", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Status)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sh", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).HQTFDummy)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sa", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Amplifier)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("se", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Entity)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sf", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).EntityType)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sg", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).EntitySubType)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("so", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).SectorOneModifier)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sp", units.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).SectorOneModifier)).ToArray()));
                 await command.ExecuteNonQueryAsync(scribeToken);
             }
             catch (Exception ex)

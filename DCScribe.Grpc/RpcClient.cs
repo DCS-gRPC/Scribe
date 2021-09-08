@@ -6,6 +6,7 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
 using RurouniJones.DCScribe.Shared.Interfaces;
+using RurouniJones.DCScribe.Shared.Models;
 
 namespace RurouniJones.DCScribe.Grpc
 {
@@ -54,7 +55,8 @@ namespace RurouniJones.DCScribe.Grpc
                                 Player = sourceUnit.PlayerName,
                                 GroupName = sourceUnit.GroupName,
                                 Speed = sourceUnit.Speed,
-                                Heading = sourceUnit.Heading
+                                Heading = sourceUnit.Heading,
+                                Symbology = new MilStd2525d((int) sourceUnit.Coalition)
                             });
                             _logger.LogDebug("Enqueue unit update {unit}", sourceUnit);
                             break;

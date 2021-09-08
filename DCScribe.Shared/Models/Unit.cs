@@ -1,4 +1,6 @@
-﻿namespace RurouniJones.DCScribe.Shared.Models
+﻿using RurouniJones.DCScribe.Shared.Interfaces;
+
+namespace RurouniJones.DCScribe.Shared.Models
 {
     public class Unit
     {
@@ -14,5 +16,6 @@
         public double Heading { get; init; }
         public double Speed { get; init; }
         public bool Deleted { get; init; }
+        public ISymbology Symbology { get; init; }
     }
 }
