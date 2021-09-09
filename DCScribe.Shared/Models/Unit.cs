@@ -11,6 +11,5 @@
         public string Type { get; init; }
         public Position Position { get; init; }
         public double Altitude { get; init; }
-        public bool Deleted { get; set; }
     }
 }

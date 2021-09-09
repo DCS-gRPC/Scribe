@@ -43,12 +43,11 @@ namespace RurouniJones.DCScribe.Postgres
 
                 await using var command = new NpgsqlCommand(
                 @"INSERT INTO units (id, ""position"", altitude, type, name, callsign, player, group_name,
-                        coalition, heading, speed, deleted, updated_at)
-                        SELECT * FROM unnest(@i, @l, @a, @t, @n, @pi, @pl, @g, @c, @h, @s, @d, @u)
+                        coalition, heading, speed, updated_at)
+                        SELECT * FROM unnest(@i, @l, @a, @t, @n, @pi, @pl, @g, @c, @h, @s, @u)
                         ON CONFLICT ON CONSTRAINT units_pkey
                         DO UPDATE SET ""position"" = EXCLUDED.position, altitude = EXCLUDED.altitude, 
-                        heading = EXCLUDED.heading, speed = EXCLUDED.speed, deleted = EXCLUDED.deleted,
-                        updated_at = EXCLUDED.updated_at", conn);
+                        heading = EXCLUDED.heading, speed = EXCLUDED.speed, updated_at = EXCLUDED.updated_at", conn);
 
                 command.Parameters.Add(new NpgsqlParameter<int[]>("i", units.Select(e =>
                     (int) e.Id).ToArray()));
@@ -72,8 +71,6 @@ namespace RurouniJones.DCScribe.Postgres
                     e.Coalition).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<int[]>("s", units.Select(e =>
                     e.Coalition).ToArray()));
-                command.Parameters.Add(new NpgsqlParameter<bool[]>("d", units.Select(e =>
-                    e.Deleted).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<DateTime[]>("u", units.Select(e =>
                     DateTime.UtcNow).ToArray()));
 

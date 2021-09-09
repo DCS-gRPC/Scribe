@@ -141,20 +141,20 @@ namespace RurouniJones.DCScribe.Core
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Error processing queue");
+                    _logger.LogWarning(ex, "{server} Error processing queue", GameServer.ShortName);
                 }
             }
         }
 
         private async Task UpdateUnitsAsync(List<Unit> units, CancellationToken scribeToken)
         {
-            _logger.LogInformation("Writing\t {count} \t unit(s) to database at\t\t {time}",units.Count, DateTimeOffset.Now);
+            _logger.LogInformation("{server} Writing {count} unit(s) to database", GameServer.ShortName, units.Count);
             await _databaseClient.UpdateUnitsAsync(units, scribeToken);
         }
 
         private async Task DeleteUnitsAsync(List<uint> ids, CancellationToken scribeToken)
         {
-            _logger.LogInformation("Deleting\t {count} \t unit(s) from database at\t {time}",ids.Count, DateTimeOffset.Now);
+            _logger.LogInformation("{server} Deleting {count} unit(s) from database",GameServer.ShortName, ids.Count);
             await _databaseClient.DeleteUnitsAsync(ids, scribeToken);
         }
     }
