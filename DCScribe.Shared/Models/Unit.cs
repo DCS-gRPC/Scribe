@@ -11,5 +11,8 @@
         public string Type { get; init; }
         public Position Position { get; init; }
         public double Altitude { get; init; }
+        public double Heading { get; init; }
+        public double Speed { get; init; }
+        public bool Deleted { get; init; }
     }
 }

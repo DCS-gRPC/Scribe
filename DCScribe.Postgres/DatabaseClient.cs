@@ -68,9 +68,9 @@ namespace RurouniJones.DCScribe.Postgres
                 command.Parameters.Add(new NpgsqlParameter<int[]>("c", units.Select(e =>
                     e.Coalition).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<int[]>("h", units.Select(e =>
-                    e.Coalition).ToArray()));
+                    (int) Math.Round(e.Heading)).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<int[]>("s", units.Select(e =>
-                    e.Coalition).ToArray()));
+                    (int) Math.Round(e.Speed)).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<DateTime[]>("u", units.Select(e =>
                     DateTime.UtcNow).ToArray()));
 

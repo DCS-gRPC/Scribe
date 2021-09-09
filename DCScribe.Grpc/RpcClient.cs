@@ -53,6 +53,8 @@ namespace RurouniJones.DCScribe.Grpc
                                 Type = sourceUnit.Type,
                                 Player = sourceUnit.PlayerName,
                                 GroupName = sourceUnit.GroupName,
+                                Speed = sourceUnit.Speed,
+                                Heading = sourceUnit.Heading
                             });
                             _logger.LogDebug("Enqueue unit update {unit}", sourceUnit);
                             break;
@@ -62,6 +64,7 @@ namespace RurouniJones.DCScribe.Grpc
                             {
                                 Id = deletedUnit.Id,
                                 Name = deletedUnit.Name,
+                                Deleted = true
                             });
                             _logger.LogDebug("Enqueue unit deletion {unit}", deletedUnit);
                             break;
