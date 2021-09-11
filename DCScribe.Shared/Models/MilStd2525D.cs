@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using RurouniJones.DCScribe.Shared.Interfaces;
 
 namespace RurouniJones.DCScribe.Shared.Models
@@ -71,33 +72,48 @@ namespace RurouniJones.DCScribe.Shared.Models
             }
         }
 
+        public int Version { get; set; } = 10;
         public Enums.Context Context { get; set; } = Enums.Context.Reality;
         public Enums.StandardIdentity StandardIdentity { get; set; } = Enums.StandardIdentity.Pending;
         public Enums.SymbolSet SymbolSet { get; set; } = Enums.SymbolSet.LandUnits;
         public Enums.Status Status { get; set; } = Enums.Status.Present;
         // ReSharper disable once InconsistentNaming
         public int HQTFDummy { get; set; } = 0;
-        public int Amplifier => 0;
+        public int Amplifier { get; set; } = 0;
         public Enums.Entity Entity { get; set; } = Enums.Entity.Military;
         public int EntityType { get; set; } = 0;
         public int EntitySubType { get; set; } = 0;
         public int SectorOneModifier { get; set; } = 0;
         public int SectorTwoModifier { get; set; } = 0;
 
-        public MilStd2525d(int dcsCoalition)
+        public MilStd2525d(int dcsCoalition, string code)
         {
-            StandardIdentity = dcsCoalition switch
+            StandardIdentity = dcsCoalition switch // 2-3 is the Standard Identity which we calculate ourselves
             {
                 0 => Enums.StandardIdentity.Neutral,
                 1 => Enums.StandardIdentity.HostileFaker,
                 2 => Enums.StandardIdentity.Friend,
                 _ => StandardIdentity
             };
+
+            if (code == null) return;
+
+            Version = int.Parse(code.Substring(0, 2)); // 0-1
+            // 2-3 See above
+            SymbolSet = Enum.Parse<Enums.SymbolSet>(code.Substring(4, 2)); // 4-5
+            Status = Enum.Parse<Enums.Status>(code.Substring(6, 1)); // 6
+            HQTFDummy = int.Parse(code.Substring(7, 1)); // 7
+            Amplifier = int.Parse(code.Substring(8, 2)); // 8-9
+            Entity = Enum.Parse<Enums.Entity>(code.Substring(10, 2)); // 10-11
+            EntityType = int.Parse(code.Substring(12, 2)); // 12-13
+            EntitySubType = int.Parse(code.Substring(14, 2)); // 14-15
+            SectorOneModifier = int.Parse(code.Substring(16, 2)); // 16-17
+            SectorTwoModifier = int.Parse(code.Substring(18, 2)); // 18-19
         }
 
         public override string ToString()
         {
-            return new StringBuilder(10)
+            return new StringBuilder(Version)
                 .Append(StandardIdentity.ToString("00"))
                 .Append(SymbolSet.ToString("00"))
                 .Append(Status.ToString("0"))

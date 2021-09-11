@@ -105,7 +105,7 @@ namespace RurouniJones.DCScribe.Postgres
                 command.Parameters.Add(new NpgsqlParameter<int[]>("so", units.Select(e =>
                     Convert.ToInt32(((MilStd2525d) e.Symbology).SectorOneModifier)).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<int[]>("sp", units.Select(e =>
-                    Convert.ToInt32(((MilStd2525d) e.Symbology).SectorOneModifier)).ToArray()));
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).SectorTwoModifier)).ToArray()));
                 await command.ExecuteNonQueryAsync(scribeToken);
             }
             catch (Exception ex)
