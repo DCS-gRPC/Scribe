@@ -3,49 +3,49 @@
   code: leopard-2A4-TRS
   dcs_codes: 
     - leopard-2A4_trs
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Leopard 2A4 MBT (Turkey)
 - 
   code: ~
   dcs_codes: 
     - leopard-2A4
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Leopard 2A4 MBT
 - 
   code: ~
   dcs_codes: 
     - Challenger2
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Challenger 2 MBT
 - 
   code: ~
   dcs_codes: 
     - Leopard-2A5
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Leopard 2A5 MBT
 - 
   code: ~
   dcs_codes: 
     - M-1 Abrams
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: M1A1 Abrams MBT
 - 
   code: Leopard 2 MBT
   dcs_codes: 
     - Leopard-2
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Leopard 2 MBT
 - 
   code: Leclerc MBT
   dcs_codes: 
     - Leclerc
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Leclerc MBT
 - 
   code: T-90 MBT
   dcs_codes: 
     - T-90
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: T-90 MBT
 - 
   code: Freya EWR (WW2 GER)
@@ -57,31 +57,31 @@
   code: T-80UD MBT
   dcs_codes: 
     - T-80UD
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: T-80UD MBT
 - 
   code: ZTZ96B MBT
   dcs_codes: 
     - ZTZ96B
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: ZTZ96B MBT
 - 
   code: ~
   dcs_codes: 
     - T-72B
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: T-72B MBT
 - 
   code: ~
   dcs_codes: 
     - T-72B3
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: T-72B3 MBT
 - 
   code: ~
   dcs_codes: 
     - M-60
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: ~
 - 
   code: Electric locomotive
@@ -111,13 +111,13 @@
   code: Leopard 1A3 MBT
   dcs_codes: 
     - Leopard1A3
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Leopard 1A3 MBT
 - 
   code: ~
   dcs_codes: 
     - Chieftain_mk3
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Chieftan Mk3 MBT
 - 
   code: ~
@@ -135,7 +135,7 @@
   code: Merkava Mk4
   dcs_codes: 
     - Merkava_Mk4
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: Merkava Mk4 MBT
 - 
   code: Tiger I
@@ -153,7 +153,7 @@
   code: ~
   dcs_codes: 
     - T-55
-  mil_std_2525_d: 10001500001202000000
+  mil_std_2525_d: 10001000001205000000
   name: T-55 MBT
 - 
   code: ~
@@ -231,14 +231,14 @@
   code: ~
   dcs_codes: 
     - M10_GMC
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001204010000
+  name: M10 Gun Motor Carriage
 - 
   code: ~
   dcs_codes: 
     - Stug_III
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001205000000
+  name: StuG III Assault Gun
 - 
   code: Sd.Kfz. 234
   dcs_codes: 
@@ -250,7 +250,7 @@
   dcs_codes: 
     - ZBD04A
   mil_std_2525_d: 10001000001205000948
-  name: ZBD04A
+  name: ZBD04A 
 - 
   code: M6
   dcs_codes: 
@@ -286,216 +286,216 @@
   dcs_codes: 
     - S-300PS 5P85C ln
   mil_std_2525_d: 10001500001111080000
-  name: S-300 Surface to Air Missle
+  name: S-300 (SA-10 "Grumble") 5P85C Transporter Erector Launcher
 - 
   code: ~
   dcs_codes: 
     - 2S6 Tunguska
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301013453
+  name: 2S6 Tunguska (SA-19 "Grison")
 - 
   code: ~
   dcs_codes: 
     - S-300PS 40B6MD sr
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301005023
+  name: S-300PS (SA-10 "Grumble") 40B6MD "Clam Shell" Low Altitude Radar
 - 
   code: ~
   dcs_codes: 
     - MCV-80
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001211050000
+  name: "Warrior" Infantry Fighting Vehicle
 - 
   code: ~
   dcs_codes: 
     - S-300PS 64H6E sr
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301005028
+  name: S-300PS (SA-10 "Grumble") 64H6E "Big Bird" Long Range Radar
 - 
   code: ~
   dcs_codes: 
     - Tor 9A331
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301025053
+  name: 9A331 Tor (SA-15 "Gauntlet")
 - 
   code: ~
   dcs_codes: 
     - Kub 1S91 str
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301005053
+  name: 2K12 Kub 1S91 (SA-6 "Straight Flush") Search/Track Radar
 - 
   code: ~
   dcs_codes: 
     - Kub 2P25 ln
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001111060000
+  name: 2K12 Kub 939M1 Transporter Erector Launcher
 - 
   code: ~
   dcs_codes: 
     - Osa 9A33 ln
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301025053
+  name: 9A33 Osa (SA-8 "Gecko")
 - 
   code: ~
   dcs_codes: 
     - Marder
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001211050000
+  name: "Marder" Infantry Fighting Vehicle
 - 
   code: ~
   dcs_codes: 
     - BMP-2
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001211050000
+  name: BMP-2 Infantry Fighting Vehicle
 - 
   code: ~
   dcs_codes: 
     - BMP-1
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001211050000
+  name: BMP-1 Infantry Fighting Vehicle
 - 
   code: ~
   dcs_codes: 
     - S-300PS 54K6 cp
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301950000
+  name: S-300PS (SA-10 "Grumble") 54K6 Command Post
 - 
   code: ~
   dcs_codes: 
     - S-300PS 40B6M tr
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301005052
+  name: S-300PS (SA-10 "Grumble") 30N6 "Flap Lid" Tracking Radar
 - 
   code: ~
   dcs_codes: 
     - SA-11 Buk LN 9A310M1
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001111060000
+  name: 9K37 Buk (SA-11 "Gadfly") 9A310M1 Transporter Erector Launcher
 - 
   code: ~
   dcs_codes: 
     - ZSU-23-4 Shilka
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001105000000
+  name: Zu-23-4 "Shilka" Self Propelled Anti-Aircraft Gun
 - 
   code: ~
   dcs_codes: 
     - SA-11 Buk SR 9S18M1
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301005053
+  name: 9K37 Buk (SA-11 "Gadfly") 9S18M1 Search/Track Radar
 - 
   code: ~
   dcs_codes: 
     - SA-11 Buk CC 9S470M1
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301950000
+  name: 9K37 Buk (SA-11 "Gadfly") 9S470M1 Command Centre
 - 
   code: ~
   dcs_codes: 
     - S-300PS 5P85D ln
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001111090000
+  name: S-300PS (SA-10 "Grumble") 5P85D Transporter Erector Launcher
 - 
   code: ~
   dcs_codes: 
     - RLS_19J6
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301005028
+  name: S-200 (SA-5 "Gammon") RLS 19J6 Search Radar 
 - 
   code: ~
   dcs_codes: 
     - PLZ05
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001303010000
+  name: PLZ05 Self Propelled Howitzer
 - 
   code: ~
   dcs_codes: 
     - Uragan_BM-27
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001303014100
+  name: BM-27 Uragan MRLS
 - 
   code: ~
   dcs_codes: 
     - Coach cargo open
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001502000000
+  name: Open Cargo Train Coach
 - 
   code: ~
   dcs_codes: 
     - rapier_fsa_launcher
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001111010000
+  name: Rapier FSA Launcher Element
 - 
   code: ~
   dcs_codes: 
     - SAU 2-C9
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001308010000
+  name: SAU 2S9 Nona Self Propelled Mortar
 - 
   code: ~
   dcs_codes: 
     - Strela-1 9P31
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301020023
+  name: 9P31 Strela-1 Low Altitude SAM
 - 
   code: ~
   dcs_codes: 
     - Vulcan
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001301015043
+  name: Vulcan SPAAG
 - 
   code: ~
   dcs_codes: 
     - Tetrarch
-  mil_std_2525_d: ~
-  name: ~
-- 
+  mil_std_2525_d: 10001000001205000019
+  name: Tetrarch Light Tank
+ -
   code: ~
   dcs_codes: 
     - generator_5i57
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10002000001100001000
+  name: 5i57 Diesel Generator
 - 
   code: ~
   dcs_codes: 
     - VAB_Mephisto
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001204020000
+  name: VAP Mephisto Mobile ATGM Carrier
 - 
   code: ~
   dcs_codes: 
     - T155_Firtina
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000001303010000
+  name: T115 Firtina Self Propelled Howitzer
 - 
   code: ~
   dcs_codes: 
     - M4_Tractor
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001401000000
+  name: M4 Tractor Utility Vehicle (for towing artillery)
 - 
   code: ~
   dcs_codes: 
     - Strela-10M3
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000331301020023
+  name: Strela 10M3 Low Altitude SAM
 - 
   code: ~
   dcs_codes: 
     - Coach a platform
-  mil_std_2525_d: ~
+  mil_std_2525_d: 10001500001502000000
   name: ~
 - 
   code: ~
   dcs_codes: 
     - hy_launcher
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001000321301020023
+  name: HQ-7 Low Altitude SAM
 - 
   code: ~
   dcs_codes: 
     - Daimler_AC
-  mil_std_2525_d: ~
+  mil_std_2525_d: 
   name: ~
 - 
   code: ~
@@ -507,8 +507,8 @@
   code: ~
   dcs_codes: 
     - Coach a tank blue
-  mil_std_2525_d: ~
-  name: ~
+  mil_std_2525_d: 10001500001502000000
+  name: Train Coach - Blue Fuel Tank
 - 
   code: ~
   dcs_codes: 
