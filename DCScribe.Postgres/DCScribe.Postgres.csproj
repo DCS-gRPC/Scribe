@@ -20,5 +20,4 @@
   <ItemGroup>
     <ProjectReference Include="..\DCScribe.Shared\DCScribe.Shared.csproj" />
   </ItemGroup>
-
 </Project>
