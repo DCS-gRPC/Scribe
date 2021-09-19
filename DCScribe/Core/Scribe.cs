@@ -68,7 +68,7 @@ namespace RurouniJones.DCScribe.Core
 
                 var tasks = new[]
                 {
-                    _rpcClient.ExecuteAsync(scribeToken), // Get the events and put them into the queue
+                    _rpcClient.StreamUnitsAsync(scribeToken), // Get the events and put them into the queue
                     ProcessQueue(queue, scribeToken), // Process the queue events into the units dictionary
                 };
                 await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets

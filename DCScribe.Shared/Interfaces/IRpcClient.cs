@@ -24,6 +24,6 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
          */
         public int Port { get; set; }
 
-        Task ExecuteAsync(CancellationToken stoppingToken);
+        Task StreamUnitsAsync(CancellationToken stoppingToken);
     }
 }

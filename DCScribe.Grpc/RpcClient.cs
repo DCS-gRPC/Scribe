@@ -24,7 +24,7 @@ namespace RurouniJones.DCScribe.Grpc
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task StreamUnitsAsync(CancellationToken stoppingToken)
         {
             using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
             var client = new Mission.MissionClient(channel);
