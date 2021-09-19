@@ -250,7 +250,7 @@
   dcs_codes: 
     - ZBD04A
   mil_std_2525_d: 10001000001205000948
-  name: ZBD04A 
+  name: ZBD04A
 - 
   code: M6
   dcs_codes: 
@@ -271,7 +271,7 @@
   name: Roland Radar
 - 
   code: Roland ADS
-  dcs_codes:
+  dcs_codes: 
     - Roland ADS
   mil_std_2525_d: 10001000331301025000
   name: Roland ADS
@@ -286,43 +286,43 @@
   dcs_codes: 
     - S-300PS 5P85C ln
   mil_std_2525_d: 10001500001111080000
-  name: S-300 (SA-10 "Grumble") 5P85C Transporter Erector Launcher
+  name: S-300 (SA-10 Grumble) 5P85C Transporter Erector Launcher
 - 
   code: ~
   dcs_codes: 
     - 2S6 Tunguska
   mil_std_2525_d: 10001000001301013453
-  name: 2S6 Tunguska (SA-19 "Grison")
+  name: 2S6 Tunguska (SA-19 Grison)
 - 
   code: ~
   dcs_codes: 
     - S-300PS 40B6MD sr
   mil_std_2525_d: 10001000001301005023
-  name: S-300PS (SA-10 "Grumble") 40B6MD "Clam Shell" Low Altitude Radar
+  name: S-300PS (SA-10 Grumble) 40B6MD Clam Shell Low Altitude Radar
 - 
   code: ~
   dcs_codes: 
     - MCV-80
   mil_std_2525_d: 10001000001211050000
-  name: "Warrior" Infantry Fighting Vehicle
+  name: Warrior Infantry Fighting Vehicle
 - 
   code: ~
   dcs_codes: 
     - S-300PS 64H6E sr
   mil_std_2525_d: 10001000001301005028
-  name: S-300PS (SA-10 "Grumble") 64H6E "Big Bird" Long Range Radar
+  name: S-300PS (SA-10 Grumble) 64H6E Big Bird Long Range Radar
 - 
   code: ~
   dcs_codes: 
     - Tor 9A331
   mil_std_2525_d: 10001000001301025053
-  name: 9A331 Tor (SA-15 "Gauntlet")
+  name: 9A331 Tor (SA-15 Gauntlet)
 - 
   code: ~
   dcs_codes: 
     - Kub 1S91 str
   mil_std_2525_d: 10001000001301005053
-  name: 2K12 Kub 1S91 (SA-6 "Straight Flush") Search/Track Radar
+  name: 2K12 Kub 1S91 (SA-6 Straight Flush) Search/Track Radar
 - 
   code: ~
   dcs_codes: 
@@ -334,13 +334,13 @@
   dcs_codes: 
     - Osa 9A33 ln
   mil_std_2525_d: 10001000001301025053
-  name: 9A33 Osa (SA-8 "Gecko")
+  name: 9A33 Osa (SA-8 Gecko)
 - 
   code: ~
   dcs_codes: 
     - Marder
   mil_std_2525_d: 10001000001211050000
-  name: "Marder" Infantry Fighting Vehicle
+  name: Marder Infantry Fighting Vehicle
 - 
   code: ~
   dcs_codes: 
@@ -358,49 +358,49 @@
   dcs_codes: 
     - S-300PS 54K6 cp
   mil_std_2525_d: 10001000001301950000
-  name: S-300PS (SA-10 "Grumble") 54K6 Command Post
+  name: S-300PS (SA-10 Grumble) 54K6 Command Post
 - 
   code: ~
   dcs_codes: 
     - S-300PS 40B6M tr
   mil_std_2525_d: 10001000001301005052
-  name: S-300PS (SA-10 "Grumble") 30N6 "Flap Lid" Tracking Radar
+  name: S-300PS (SA-10 Grumble) 30N6 Flap Lid Tracking Radar
 - 
   code: ~
   dcs_codes: 
     - SA-11 Buk LN 9A310M1
   mil_std_2525_d: 10001500001111060000
-  name: 9K37 Buk (SA-11 "Gadfly") 9A310M1 Transporter Erector Launcher
+  name: 9K37 Buk (SA-11 Gadfly) 9A310M1 Transporter Erector Launcher
 - 
   code: ~
   dcs_codes: 
     - ZSU-23-4 Shilka
   mil_std_2525_d: 10001500001105000000
-  name: Zu-23-4 "Shilka" Self Propelled Anti-Aircraft Gun
+  name: Zu-23-4 Shilka Self Propelled Anti-Aircraft Gun
 - 
   code: ~
   dcs_codes: 
     - SA-11 Buk SR 9S18M1
   mil_std_2525_d: 10001000001301005053
-  name: 9K37 Buk (SA-11 "Gadfly") 9S18M1 Search/Track Radar
+  name: 9K37 Buk (SA-11 Gadfly) 9S18M1 Search/Track Radar
 - 
   code: ~
   dcs_codes: 
     - SA-11 Buk CC 9S470M1
   mil_std_2525_d: 10001000001301950000
-  name: 9K37 Buk (SA-11 "Gadfly") 9S470M1 Command Centre
+  name: 9K37 Buk (SA-11 Gadfly) 9S470M1 Command Centre
 - 
   code: ~
   dcs_codes: 
     - S-300PS 5P85D ln
   mil_std_2525_d: 10001500001111090000
-  name: S-300PS (SA-10 "Grumble") 5P85D Transporter Erector Launcher
+  name: S-300PS (SA-10 Grumble) 5P85D Transporter Erector Launcher
 - 
   code: ~
   dcs_codes: 
     - RLS_19J6
   mil_std_2525_d: 10001000001301005028
-  name: S-200 (SA-5 "Gammon") RLS 19J6 Search Radar 
+  name: S-200 (SA-5 Gammon) RLS 19J6 Search Radar
 - 
   code: ~
   dcs_codes: 
@@ -449,7 +449,7 @@
     - Tetrarch
   mil_std_2525_d: 10001000001205000019
   name: Tetrarch Light Tank
- -
+- 
   code: ~
   dcs_codes: 
     - generator_5i57
@@ -495,7 +495,7 @@
   code: ~
   dcs_codes: 
     - Daimler_AC
-  mil_std_2525_d: 
+  mil_std_2525_d: ~
   name: ~
 - 
   code: ~
