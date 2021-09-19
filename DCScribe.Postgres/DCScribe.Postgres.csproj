@@ -20,4 +20,13 @@
   <ItemGroup>
     <ProjectReference Include="..\DCScribe.Shared\DCScribe.Shared.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Documentation\DatabaseScripts\CreateAirbases.pgsql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Documentation\DatabaseScripts\CreateUnits.pgsql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

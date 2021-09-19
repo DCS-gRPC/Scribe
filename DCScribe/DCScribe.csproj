@@ -5,6 +5,23 @@
     <UserSecretsId>dotnet-DCScribe-E8C8384F-B1AE-4571-AB80-A061C7FEB9F7</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <RootNamespace>RurouniJones.DCScribe</RootNamespace>
+    <PublishSingleFile>true</PublishSingleFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Authors>Jeffrey Jones</Authors>
+    <RepositoryType>git</RepositoryType>
+    <Description>A program that gets unit information out of a DigitalCombatSimulator GameServer and into a spatially enabled Postgresql Database. This can then be used as a datasource for online maps and other applications.</Description>
+    <RepositoryUrl>https://github.com/DCS-gRPC/Scribe</RepositoryUrl>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,13 +51,20 @@
       <PackagePath></PackagePath>
       <Pack>True</Pack>
     </None>
+    <None Include="..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
     <None Update="configuration.Development.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="configuration.yaml">
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Documentation\configuration.Sample.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
