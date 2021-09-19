@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+option csharp_namespace = "RurouniJones.DCScribe.Grpc";
+
+import "common.proto";
+
+package dcs;
+
+message GetAirbasesRequest {
+	optional Coalition coalition = 1;
+}
+
+message GetAirbasesResponse {
+	repeated Airbase airbases = 1;
+}
+
+message GetMarkPanelsRequest {}
+
+message GetMarkPanelsResponse {
+	repeated MarkPanel mark_panels = 1;
+}

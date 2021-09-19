@@ -2,6 +2,7 @@ syntax = "proto3";
 option csharp_namespace = "RurouniJones.DCScribe.Grpc";
 
 import "mission.proto";
+import "world.proto";
 
 package dcs;
 
@@ -12,4 +13,12 @@ service Mission {
 
 	// Streams unit updates
 	rpc StreamUnits(StreamUnitsRequest) returns (stream UnitUpdate) {}
+}
+
+service World {
+	// https://wiki.hoggitworld.com/view/DCS_func_getAirbases
+	rpc GetAirbases(GetAirbasesRequest) returns (GetAirbasesResponse) {}
+
+	// https://wiki.hoggitworld.com/view/DCS_func_getMarkPanels
+	rpc GetMarkPanels(GetMarkPanelsRequest) returns (GetMarkPanelsResponse) {}
 }

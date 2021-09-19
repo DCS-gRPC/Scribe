@@ -29,6 +29,7 @@
     <None Remove="Protos\common.proto" />
     <None Remove="Protos\dcs.proto" />
     <None Remove="Protos\mission.proto" />
+    <None Remove="Protos\world.proto" />
   </ItemGroup>
 
   <ItemGroup>
