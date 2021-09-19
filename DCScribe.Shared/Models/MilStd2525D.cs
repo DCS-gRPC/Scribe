@@ -70,6 +70,76 @@ namespace RurouniJones.DCScribe.Shared.Models
                 Weapon = 13,
                 ManualTrack = 14
             }
+
+            public static class Air
+            {
+                public static class Military
+                {
+                    public enum EntityType
+                    {
+                        FixedWing = 1,
+                        RotaryWing = 2,
+                        UnMannedAircraft = 3,
+                        VerticalTakeOffUUnMannedAircraft = 4,
+                        LighterThanAir = 5,
+                        AirShip = 6,
+                        TetheredLighterThanAir = 7
+                    }
+
+                    public static class FixedWing
+                    {
+                        public enum EntitySubType
+                        {
+                            MedicalEvacuation = 1,
+                            AttackStrike = 2,
+                            Bomber = 3,
+                            Fighter = 4,
+                            FighterBomber = 5,
+                            Cargo = 7,
+                            ElectronicCombat = 8,
+                            Tanker = 9,
+                            Patrol = 10,
+                            Reconnaissance = 11,
+                            Trainer = 12,
+                            Utility = 13,
+                            VSTOL = 14,
+                            AirborneCommandPost = 15,
+                            AirborneEarlyWarning = 16,
+                            AntiSurfaceWarfare = 17,
+                            AntiSubmarineWarfare = 18,
+                            Communications = 19,
+                            CombatSearchAndRescue = 20,
+                            ElectronicSupport = 21,
+                            Government = 22,
+                            MineCounterMeasures = 23,
+                            PersonnelRecovery = 24,
+                            SearchAndRescue = 25,
+                            SpecialOperationsForces = 26,
+                            UltraLight = 27,
+                            PhotographicReconnaissance = 28,
+                            VeryImportantPerson = 29,
+                            SuppressionOfEnemyAirDefense = 30,
+                            Passenger = 31,
+                            Escort = 32,
+                            ElectronicAttack = 33,
+                        }
+                    }
+                }
+
+                public static class Civilian
+                {
+                    public enum EntityType
+                    {
+                        FixedWing = 1,
+                        RotaryWing = 2,
+                        UnMannedAircraft = 3,
+                        VerticalTakeOffUUnMannedAircraft = 4,
+                        LighterThanAir = 5,
+                        AirShip = 6,
+                        TetheredLighterThanAir = 7
+                    }
+                }
+            }
         }
 
         public int Version { get; set; } = 10;
@@ -78,13 +148,13 @@ namespace RurouniJones.DCScribe.Shared.Models
         public Enums.SymbolSet SymbolSet { get; set; } = Enums.SymbolSet.LandUnits;
         public Enums.Status Status { get; set; } = Enums.Status.Present;
         // ReSharper disable once InconsistentNaming
-        public int HQTFDummy { get; set; } = 0;
-        public int Amplifier { get; set; } = 0;
+        public int HQTFDummy { get; set; }
+        public int Amplifier { get; set; }
         public Enums.Entity Entity { get; set; } = Enums.Entity.Military;
-        public int EntityType { get; set; } = 0;
-        public int EntitySubType { get; set; } = 0;
-        public int SectorOneModifier { get; set; } = 0;
-        public int SectorTwoModifier { get; set; } = 0;
+        public int EntityType { get; set; }
+        public int EntitySubType { get; set; }
+        public int SectorOneModifier { get; set; }
+        public int SectorTwoModifier { get; set; }
 
         public MilStd2525d(int dcsCoalition, string code)
         {
