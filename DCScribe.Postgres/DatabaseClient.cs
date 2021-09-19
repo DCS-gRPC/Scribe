@@ -27,11 +27,18 @@ namespace RurouniJones.DCScribe.Postgres
 
         public async Task ClearTableAsync()
         {
-            await using var conn = new NpgsqlConnection(GetConnectionString());
-            await conn.OpenAsync();
+            try
+            {
+                await using var conn = new NpgsqlConnection(GetConnectionString());
+                await conn.OpenAsync();
 
-            await using var cmd = new NpgsqlCommand("TRUNCATE TABLE units", conn);
-            await cmd.ExecuteNonQueryAsync();
+                await using var cmd = new NpgsqlCommand("TRUNCATE TABLE units", conn);
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Database Exception");
+            }
         }
 
         public async Task UpdateUnitsAsync(List<Unit> units, CancellationToken scribeToken)
