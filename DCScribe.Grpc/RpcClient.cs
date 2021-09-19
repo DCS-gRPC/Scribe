@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
@@ -91,6 +92,40 @@ namespace RurouniJones.DCScribe.Grpc
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "gRPC Exception");
+            }
+        }
+
+        public async Task<List<Shared.Models.Airbase>> GetAirbasesAsync()
+        {
+            using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
+            var client = new World.WorldClient(channel);
+
+            var airbases = new List<Shared.Models.Airbase>();
+            try
+            {
+                var response = await client.GetAirbasesAsync(new GetAirbasesRequest());
+
+                foreach (var airbase in response.Airbases)
+                {
+                    airbases.Add(new Shared.Models.Airbase
+                    {
+                        Name = airbase.Name,
+                        Callsign = airbase.Callsign,
+                        Position = new Shared.Models.Position(airbase.Position.Lat, airbase.Position.Lon),
+                        Altitude = airbase.Position.Alt,
+                        Category = (Shared.Models.Airbase.AirbaseCategory) (int) airbase.Category,
+                        Type = airbase.DisplayName, // "Invisible FARP", "CG Ticonderoga", "Krymsk" etc.
+                        Coalition =  (int) airbase.Coalition,
+                        Symbology = new MilStd2525d((int) airbase.Coalition, null) // TODO Think about how to do this. Probably based off Category
+                    });
+                }
+
+                return airbases;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "gRPC Exception");
+                return airbases;
             }
         }
     }

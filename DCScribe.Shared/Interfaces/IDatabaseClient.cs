@@ -15,8 +15,14 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
 
         Task ClearTableAsync();
 
+        Task TruncateUnitsAsync();
+
+        Task TruncateAirbasesAsync();
+
         Task UpdateUnitsAsync(List<Unit> units, CancellationToken scribeToken);
 
         Task DeleteUnitsAsync(List<uint> units, CancellationToken scribeToken);
+
+        Task WriteAirbasesAsync(List<Airbase> airbases, CancellationToken scribeToken);
     }
 }

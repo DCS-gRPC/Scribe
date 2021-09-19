@@ -27,13 +27,36 @@ namespace RurouniJones.DCScribe.Postgres
 
         public async Task ClearTableAsync()
         {
+            await TruncateUnitsAsync();
+            await TruncateAirbasesAsync();
+        }
+
+        public async Task TruncateUnitsAsync()
+        {
             try
             {
                 await using var conn = new NpgsqlConnection(GetConnectionString());
                 await conn.OpenAsync();
 
-                await using var cmd = new NpgsqlCommand("TRUNCATE TABLE units", conn);
-                await cmd.ExecuteNonQueryAsync();
+                await using var truncateUnits = new NpgsqlCommand("TRUNCATE TABLE units", conn);
+                await truncateUnits.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Database Exception");
+            }
+
+        }
+
+        public async Task TruncateAirbasesAsync()
+        {
+            try
+            {
+                await using var conn = new NpgsqlConnection(GetConnectionString());
+                await conn.OpenAsync();
+
+                await using var truncateAirbases = new NpgsqlCommand("TRUNCATE TABLE airbases", conn);
+                await truncateAirbases.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
             {
@@ -134,6 +157,75 @@ namespace RurouniJones.DCScribe.Postgres
                 command.Parameters.Add(new NpgsqlParameter<int[]>("a", units.Select(u =>
                     (int) u).ToArray()));
 
+                await command.ExecuteNonQueryAsync(scribeToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Database Exception");
+            }
+        }
+
+        public async Task WriteAirbasesAsync(List<Airbase> airbases, CancellationToken scribeToken)
+        {
+            try
+            {
+                await using var conn = new NpgsqlConnection(GetConnectionString());
+                await conn.OpenAsync(scribeToken);
+                conn.TypeMapper.UseNetTopologySuite(geographyAsDefault: true);
+
+                await using var command = new NpgsqlCommand(
+                @"INSERT INTO airbases (name, callsign, ""position"", altitude, ""category"", ""type"", coalition,
+                        updated_at, context, standard_identity, symbol_set, status, hqtf_dummy, amplifier, entity,
+                        entity_type, entity_sub_type, sector_one_modifier,
+                        sector_two_modifier)
+                        SELECT * FROM unnest(@n, @c, @p, @a, @ca, @t, @co, @u, @sc, @si, @ss, @st, @sh, @sa, @se, @sf,
+                        @sg, @so, @sp)", conn);
+
+                /*
+                 * The following fields come directly from DCS
+                 */
+                command.Parameters.Add(new NpgsqlParameter<string[]>("n", airbases.Select(e =>
+                    e.Name).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<string[]>("c", airbases.Select(e =>
+                    e.Callsign).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<Point[]>("p", airbases.Select(e =>
+                    new Point(new Coordinate(e.Position.Longitude, e.Position.Latitude))).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<double[]>("a", airbases.Select(e =>
+                    e.Altitude).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<string[]>("ca", airbases.Select(e =>
+                    e.Category.ToString()).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<string[]>("t", airbases.Select(e =>
+                    e.Type).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("co", airbases.Select(e =>
+                    e.Coalition).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<DateTime[]>("u", airbases.Select(e =>
+                    DateTime.UtcNow).ToArray()));
+
+                /*
+                 * The following fields are calculated using MilStd-2525D based on the unit
+                 */
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sc", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Context)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("si", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).StandardIdentity)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("ss", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).SymbolSet)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("st", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Status)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sh", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).HQTFDummy)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sa", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Amplifier)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("se", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).Entity)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sf", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).EntityType)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sg", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).EntitySubType)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("so", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).SectorOneModifier)).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("sp", airbases.Select(e =>
+                    Convert.ToInt32(((MilStd2525d) e.Symbology).SectorTwoModifier)).ToArray()));
                 await command.ExecuteNonQueryAsync(scribeToken);
             }
             catch (Exception ex)

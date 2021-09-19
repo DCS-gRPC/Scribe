@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using RurouniJones.DCScribe.Shared.Models;
@@ -25,5 +26,7 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
         public int Port { get; set; }
 
         Task StreamUnitsAsync(CancellationToken stoppingToken);
+
+        Task<List<Airbase>> GetAirbasesAsync();
     }
 }

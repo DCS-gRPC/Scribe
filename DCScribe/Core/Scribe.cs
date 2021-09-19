@@ -69,7 +69,8 @@ namespace RurouniJones.DCScribe.Core
                 var tasks = new[]
                 {
                     _rpcClient.StreamUnitsAsync(scribeToken), // Get the events and put them into the queue
-                    ProcessQueue(queue, scribeToken), // Process the queue events into the units dictionary
+                    ProcessUnitQueue(queue, scribeToken), // Process the queue events into the units dictionary
+                    ProcessAirbaseUpdates(scribeToken) // Process Airbase updates by calling an APi on a timer
                 };
                 await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets
                                            // disconnected on mission restart
@@ -93,7 +94,7 @@ namespace RurouniJones.DCScribe.Core
             }
         }
 
-        private async Task ProcessQueue(ConcurrentQueue<Unit> queue, CancellationToken scribeToken)
+        private async Task ProcessUnitQueue(ConcurrentQueue<Unit> queue, CancellationToken scribeToken)
         {
             var unitsToUpdate = new ConcurrentDictionary<uint, Unit>();
             var unitsToDelete = new List<uint>();
@@ -156,6 +157,25 @@ namespace RurouniJones.DCScribe.Core
         {
             _logger.LogInformation("{server} Deleting {count} unit(s) from database",GameServer.ShortName, ids.Count);
             await _databaseClient.DeleteUnitsAsync(ids, scribeToken);
+        }
+
+        private async Task ProcessAirbaseUpdates(CancellationToken scribeToken)
+        {
+            while (!scribeToken.IsCancellationRequested)
+            {
+                try
+                {
+                    var airbases = await _rpcClient.GetAirbasesAsync();
+                    if (airbases.Count == 0) continue;
+                    _logger.LogInformation("{server} Writing {count} airbase(s) to database ", GameServer.ShortName, airbases.Count);
+                    await _databaseClient.TruncateAirbasesAsync();
+                    await _databaseClient.WriteAirbasesAsync(airbases, scribeToken);
+                    await Task.Delay(TimeSpan.FromSeconds(60), scribeToken);
+                } catch (Exception)
+                {
+                    // No-op. Exceptions have already been logged in the task
+                }
+            }
         }
     }
 }
