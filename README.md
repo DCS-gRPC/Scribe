@@ -15,8 +15,8 @@ PostGIS spatial extensions added. This README assumes you are familiar
 with PostgreSQL administration already. 
 
 DCScribe can read from multiple DCS Servers at once and write to a separate
-database for each server. Therefore for each server you wish to connect to
-perform the following steps
+database for each server. Therefore for each DCS-gRPC server you wish to
+connect to perform the following steps.
 
 #### Configure the database(s)
 
@@ -42,6 +42,9 @@ After completing the above setup you can run DCSscribe by running
 `DCScribe.exe`
 
 ### Installing as a service
+
+Note: Before installing as a service make sure DCScribe runs correctly when 
+run from the command-line (Or by clicking `DCScribe.exe`)
 
 DCScribe can be installed as a Windows Service. To do so run the following
 command in a powershell window with administrative privileges. Make sure

@@ -20,34 +20,55 @@ namespace RurouniJones.DCScribe
 
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-            var configuration = new ConfigurationBuilder()
-                .AddYamlFile("configuration.yaml", false, true)
-                .AddYamlFile("configuration.Development.yaml", true, true)
-                .Build();
-
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
             try
             {
-                Log.Information("Starting DCScribe");
-                CreateHostBuilder(args, configuration).Build().Run();
+                IConfigurationRoot configuration;
+                try
+                {
+                    configuration = new ConfigurationBuilder()
+                        .AddYamlFile("configuration.yaml", false, true)
+                        .AddYamlFile("configuration.Development.yaml", true, true)
+                        .Build();
+                }
+                catch (Exception ex)
+                {
+                    if (!Environment.UserInteractive) throw;
+                    Console.WriteLine("Could not start DCScribe");
+                    Console.WriteLine("Error reading \"configuration.yaml\" file");
+                    Console.WriteLine(ex);
+                    throw;
+                }
+                try
+                {
+                    Log.Logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(configuration)
+                        .CreateLogger();
+
+                    Log.Information("Starting DCScribe");
+                    CreateHostBuilder(args, configuration).Build().Run();
+                }
+                catch (Exception ex)
+                {
+                    Log.Fatal(ex, "Could not start DCScribe");
+                    throw;
+                }
+                finally
+                {
+                    Log.Information("Stopping DCScribe");
+                    Log.CloseAndFlush();
+                }
             }
-            catch (Exception ex)
+            catch
             {
-                Log.Fatal(ex, "Could not start DCScribe");
-            }
-            finally
-            {
-                Log.Information("Stopping DCScribe");
-                Log.CloseAndFlush();
+                if (!Environment.UserInteractive) return;
+                Console.ReadKey();
             }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args, IConfigurationRoot config)
         {
             return Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
+                .ConfigureServices((_, services) =>
                 {
                     services.AddHostedService<Worker>();
                     services.AddSingleton<ScribeFactory>();
