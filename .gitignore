@@ -361,5 +361,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# Do not include any of the non-production configurations
-configuration.*.yaml
+# Do not include any of the configurations
+configuration*.yaml
+
