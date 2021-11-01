@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using RurouniJones.DCScribe.Encyclopedia;
 using RurouniJones.DCScribe.Shared.Interfaces;
 using RurouniJones.DCScribe.Shared.Models;
+using RurouniJones.DCScribe.Grpc.Dcs.Mission;
+using RurouniJones.DCScribe.Grpc.Dcs.World;
 
 namespace RurouniJones.DCScribe.Grpc
 {
@@ -28,7 +30,7 @@ namespace RurouniJones.DCScribe.Grpc
         public async Task StreamUnitsAsync(CancellationToken stoppingToken)
         {
             using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
-            var client = new Mission.MissionClient(channel);
+            var client = new MissionService.MissionServiceClient(channel);
             try
             {
                 var units = client.StreamUnits(new StreamUnitsRequest
@@ -40,17 +42,17 @@ namespace RurouniJones.DCScribe.Grpc
                 {
                     switch (update.UpdateCase)
                     {
-                        case UnitUpdate.UpdateOneofCase.None:
+                        case StreamUnitsResponse.UpdateOneofCase.None:
                             //No-op
                             break;
-                        case UnitUpdate.UpdateOneofCase.Unit:
+                        case StreamUnitsResponse.UpdateOneofCase.Unit:
                             var sourceUnit = update.Unit;
                             UpdateQueue.Enqueue(new Shared.Models.Unit
                             {
                                 Coalition = (int)sourceUnit.Coalition,
                                 Id = sourceUnit.Id,
                                 Name = sourceUnit.Name,
-                                Position = new Shared.Models.Position(sourceUnit.Position.Lat, sourceUnit.Position.Lon),
+                                Position = new Position(sourceUnit.Position.Lat, sourceUnit.Position.Lon),
                                 Altitude = sourceUnit.Position.Alt,
                                 Callsign = sourceUnit.Callsign,
                                 Type = sourceUnit.Type,
@@ -62,7 +64,7 @@ namespace RurouniJones.DCScribe.Grpc
                             });
                             _logger.LogDebug("Enqueue unit update {unit}", sourceUnit);
                             break;
-                        case UnitUpdate.UpdateOneofCase.Gone:
+                        case StreamUnitsResponse.UpdateOneofCase.Gone:
                             var deletedUnit = update.Gone;
                             UpdateQueue.Enqueue(new Shared.Models.Unit
                             {
@@ -95,25 +97,25 @@ namespace RurouniJones.DCScribe.Grpc
             }
         }
 
-        public async Task<List<Shared.Models.Airbase>> GetAirbasesAsync()
+        public async Task<List<Airbase>> GetAirbasesAsync()
         {
             using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
-            var client = new World.WorldClient(channel);
+            var client = new WorldService.WorldServiceClient(channel);
 
-            var airbases = new List<Shared.Models.Airbase>();
+            var airbases = new List<Airbase>();
             try
             {
                 var response = await client.GetAirbasesAsync(new GetAirbasesRequest());
 
                 foreach (var airbase in response.Airbases)
                 {
-                    airbases.Add(new Shared.Models.Airbase
+                    airbases.Add(new Airbase
                     {
                         Name = airbase.Name,
                         Callsign = airbase.Callsign,
-                        Position = new Shared.Models.Position(airbase.Position.Lat, airbase.Position.Lon),
+                        Position = new Position(airbase.Position.Lat, airbase.Position.Lon),
                         Altitude = airbase.Position.Alt,
-                        Category = (Shared.Models.Airbase.AirbaseCategory) (int) airbase.Category,
+                        Category = (Airbase.AirbaseCategory) (int) airbase.Category,
                         Type = airbase.DisplayName, // "Invisible FARP", "CG Ticonderoga", "Krymsk" etc.
                         Coalition =  (int) airbase.Coalition,
                         Symbology = new MilStd2525d((int) airbase.Coalition, null) // TODO Think about how to do this. Probably based off Category

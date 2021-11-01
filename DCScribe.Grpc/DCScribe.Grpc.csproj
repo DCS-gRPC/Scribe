@@ -22,19 +22,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\*.proto" ProtoRoot="Protos" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Protos\common.proto" />
-    <None Remove="Protos\dcs.proto" />
-    <None Remove="Protos\mission.proto" />
-    <None Remove="Protos\world.proto" />
+    <Protobuf Include="Protos\dcs\**\*.proto" ProtoRoot="Protos" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DCScribe.Encyclopedia\DCScribe.Encyclopedia.csproj" />
     <ProjectReference Include="..\DCScribe.Shared\DCScribe.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Protos\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option csharp_namespace = "RurouniJones.DCScribe.Grpc.Dcs";
+
+package dcs;
+
+import "dcs/common/common.proto";
+import "dcs/mission/mission.proto";
+import "dcs/world/world.proto";
