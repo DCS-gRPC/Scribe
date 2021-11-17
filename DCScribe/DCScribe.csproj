@@ -15,8 +15,8 @@
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
     <Authors>Jeffrey Jones</Authors>
     <RepositoryType>git</RepositoryType>
     <Description>A program that gets unit information out of a DigitalCombatSimulator GameServer and into a spatially enabled Postgresql Database. This can then be used as a datasource for online maps and other applications.</Description>
