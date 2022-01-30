@@ -1,4 +1,4 @@
-﻿--- 
+﻿---
 - 
   code: MiG-31
   dcs_codes: 
@@ -61,6 +61,7 @@
     - F-16C-2
     - F-16CM bl.50
     - F-16C_50
+    - F-16C bl.52d
   mil_std_2525_d: 10000100001101040009
   name: Falcon
 - 
@@ -170,6 +171,7 @@
     - A-10A
     - A-10C
     - A-10C II
+    - A-10C_2
   mil_std_2525_d: 10000100001101020000
   name: Warthog
 - 
@@ -261,7 +263,7 @@
 - 
   code: F-86
   dcs_codes: 
-    - F-86F
+    - F-86F Sabre
   mil_std_2525_d: 10000100001101040008
   name: Sabre
 - 
@@ -299,6 +301,7 @@
   code: KC-135
   dcs_codes: 
     - KC-135MPRS
+    - KC135MPRS
   mil_std_2525_d: 10000100001101090005
   name: Stratotanker
 - 
@@ -342,7 +345,8 @@
 - 
   code: MiG-15
   dcs_codes: 
-    - Mig-15bis
+    - MiG-15bis
+    - MiG-15Bis
   mil_std_2525_d: 10000100001101040008
   name: Fagot
 - 
@@ -529,3 +533,15 @@
     - Yak-40
   mil_std_2525_d: 10000100001201000902
   name: Codling
+-
+  code: B-17
+  dcs_codes: 
+    - B-17G
+  mil_std_2525_d: 10000100001101020000
+  name: Fortress
+-
+  code: Ju-88
+  dcs_codes: 
+    - Ju-88A4
+  mil_std_2525_d: 10000100001101020000
+  name: Bomber

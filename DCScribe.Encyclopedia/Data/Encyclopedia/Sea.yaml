@@ -1,4 +1,4 @@
---- 
+---
 - 
   code: Rezky Class
   dcs_codes: 
@@ -126,6 +126,12 @@
   mil_std_2525_d: 10003000001202041500
   name: Oliver Hazard Perry Class
 - 
+  code: Forrestal Class
+  dcs_codes: 
+    - Forrestal
+  mil_std_2525_d: 10003000001201000001
+  name: Forrestal Class
+- 
   code: Nimitz Class
   dcs_codes: 
     - VINSON
@@ -166,3 +172,9 @@
     - SING
   mil_std_2525_d: ~
   name: Sing Class
+- 
+  code: Arleigh Burke Class
+  dcs_codes: 
+    - USS_Arleigh_Burke_IIa
+  mil_std_2525_d: 10003000001202041500
+  name: Arleigh Burke Class
