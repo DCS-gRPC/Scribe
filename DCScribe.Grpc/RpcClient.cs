@@ -60,7 +60,7 @@ namespace RurouniJones.DCScribe.Grpc
                                 GroupName = sourceUnit.GroupName,
                                 Speed = sourceUnit.Speed,
                                 Heading = sourceUnit.Heading,
-                                Symbology = new MilStd2525d((int) sourceUnit.Coalition, Repository.GetUnitByDcsCode(sourceUnit.Type)?.MilStd2525D)
+                                Symbology = new MilStd2525d((int) sourceUnit.Coalition, Repository.GetUnitByDcsCode(sourceUnit.Type)?.MilStd2525d)
                             });
                             _logger.LogDebug("Enqueue unit update {unit}", sourceUnit);
                             break;
