@@ -1,18 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
 		<RootNamespace>RurouniJones.DCScribe.Grpc</RootNamespace>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Google.Protobuf" Version="3.17.3" />
-		<PackageReference Include="Grpc.Net.Client" Version="2.38.0" />
-		<PackageReference Include="Grpc.Tools" Version="2.39.0-pre1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="..\LICENSE.md" Link="LICENSE.md">
@@ -22,16 +13,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Protos\dcs\**\*.proto" ProtoRoot="Protos" />
+	  <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\DCScribe.Encyclopedia\DCScribe.Encyclopedia.csproj" />
 		<ProjectReference Include="..\DCScribe.Shared\DCScribe.Shared.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Protos\" />
 	</ItemGroup>
 
 </Project>

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
+using RurouniJones.Dcs.Grpc.V0.Mission;
+using RurouniJones.Dcs.Grpc.V0.World;
 using RurouniJones.DCScribe.Encyclopedia;
 using RurouniJones.DCScribe.Shared.Interfaces;
 using RurouniJones.DCScribe.Shared.Models;
-using RurouniJones.DCScribe.Grpc.Dcs.Mission;
-using RurouniJones.DCScribe.Grpc.Dcs.World;
 
 namespace RurouniJones.DCScribe.Grpc
 {
@@ -57,9 +57,9 @@ namespace RurouniJones.DCScribe.Grpc
                                 Callsign = sourceUnit.Callsign,
                                 Type = sourceUnit.Type,
                                 Player = sourceUnit.PlayerName,
-                                GroupName = sourceUnit.GroupName,
-                                Speed = sourceUnit.Speed,
-                                Heading = sourceUnit.Heading,
+                                GroupName = sourceUnit.Group.Name,
+                                Speed = sourceUnit.Velocity.Speed,
+                                Heading = sourceUnit.Orientation.Heading,
                                 Symbology = new MilStd2525d((int) sourceUnit.Coalition, Repository.GetUnitByDcsCode(sourceUnit.Type)?.MilStd2525d)
                             });
                             _logger.LogDebug("Enqueue unit update {unit}", sourceUnit);

@@ -66,6 +66,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="configuration.yaml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Documentation\configuration.Sample.yaml">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
