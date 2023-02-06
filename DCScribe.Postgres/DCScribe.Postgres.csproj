@@ -28,5 +28,8 @@
 		<None Update="Documentation\DatabaseScripts\CreateUnits.pgsql">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Documentation\DatabaseScripts\CreateMarkPanels.pgsql">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 </Project>

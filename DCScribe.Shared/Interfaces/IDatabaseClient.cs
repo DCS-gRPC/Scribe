@@ -19,10 +19,14 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
 
         Task TruncateAirbasesAsync();
 
+        Task TruncateMarkPanelsAsync();
+
         Task UpdateUnitsAsync(List<Unit> units, CancellationToken scribeToken);
 
         Task DeleteUnitsAsync(List<uint> units, CancellationToken scribeToken);
 
         Task WriteAirbasesAsync(List<Airbase> airbases, CancellationToken scribeToken);
+
+        Task WriteMarkPanelsAsync(List<MarkPanel> markpanels, CancellationToken scribeToken);
     }
 }

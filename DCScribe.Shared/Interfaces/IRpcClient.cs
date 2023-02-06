@@ -28,5 +28,7 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
         Task StreamUnitsAsync(CancellationToken stoppingToken);
 
         Task<List<Airbase>> GetAirbasesAsync();
+
+        Task<List<MarkPanel>> GetMarkPanelsAsync();
     }
 }

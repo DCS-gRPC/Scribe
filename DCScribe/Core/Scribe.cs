@@ -70,7 +70,8 @@ namespace RurouniJones.DCScribe.Core
                 {
                     _rpcClient.StreamUnitsAsync(scribeToken), // Get the events and put them into the queue
                     ProcessUnitQueue(queue, scribeToken), // Process the queue events into the units dictionary
-                    ProcessAirbaseUpdates(scribeToken) // Process Airbase updates by calling an APi on a timer
+                    ProcessAirbaseUpdates(scribeToken), // Process Airbase updates by calling an APi on a timer
+                    ProcessMarkPanelUpdates(scribeToken) // Process MarkPanel updates by calling an API on a long timer
                 };
                 await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets
                                            // disconnected on mission restart
@@ -171,6 +172,25 @@ namespace RurouniJones.DCScribe.Core
                     await _databaseClient.TruncateAirbasesAsync();
                     await _databaseClient.WriteAirbasesAsync(airbases, scribeToken);
                     await Task.Delay(TimeSpan.FromSeconds(60), scribeToken);
+                } catch (Exception)
+                {
+                    // No-op. Exceptions have already been logged in the task
+                }
+            }
+        }
+
+        private async Task ProcessMarkPanelUpdates(CancellationToken scribeToken)
+        {
+            while (!scribeToken.IsCancellationRequested)
+            {
+                try
+                {
+                    var markPanels = await _rpcClient.GetMarkPanelsAsync();
+                    if (markPanels.Count == 0) continue;
+                    _logger.LogInformation("{server} Writing {count} markpanel(s) to database ", GameServer.ShortName, markPanels.Count);
+                    await _databaseClient.TruncateMarkPanelsAsync();
+                    await _databaseClient.WriteMarkPanelsAsync(markPanels, scribeToken);
+                    await Task.Delay(TimeSpan.FromSeconds(900), scribeToken);
                 } catch (Exception)
                 {
                     // No-op. Exceptions have already been logged in the task
