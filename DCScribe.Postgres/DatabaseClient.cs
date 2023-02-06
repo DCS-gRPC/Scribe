@@ -29,6 +29,7 @@ namespace RurouniJones.DCScribe.Postgres
         {
             await TruncateUnitsAsync();
             await TruncateAirbasesAsync();
+            await TruncateMarkPanelsAsync();
         }
 
         public async Task TruncateUnitsAsync()
@@ -57,6 +58,22 @@ namespace RurouniJones.DCScribe.Postgres
 
                 await using var truncateAirbases = new NpgsqlCommand("TRUNCATE TABLE airbases", conn);
                 await truncateAirbases.ExecuteNonQueryAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Database Exception");
+            }
+        }
+
+        public async Task TruncateMarkPanelsAsync()
+        {
+            try
+            {
+                await using var conn = new NpgsqlConnection(GetConnectionString());
+                await conn.OpenAsync();
+
+                await using var truncateMarkPanels = new NpgsqlCommand("TRUNCATE TABLE markpanels", conn);
+                await truncateMarkPanels.ExecuteNonQueryAsync();
             }
             catch (Exception ex)
             {
@@ -226,6 +243,42 @@ namespace RurouniJones.DCScribe.Postgres
                     Convert.ToInt32(((MilStd2525d) e.Symbology).SectorOneModifier)).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<int[]>("sp", airbases.Select(e =>
                     Convert.ToInt32(((MilStd2525d) e.Symbology).SectorTwoModifier)).ToArray()));
+                await command.ExecuteNonQueryAsync(scribeToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Database Exception");
+            }
+        }
+
+        public async Task WriteMarkPanelsAsync(List<MarkPanel> markPanels, CancellationToken scribeToken)
+        {
+            try
+            {
+                await using var conn = new NpgsqlConnection(GetConnectionString());
+                await conn.OpenAsync(scribeToken);
+                conn.TypeMapper.UseNetTopologySuite(geographyAsDefault: true);
+
+                await using var command = new NpgsqlCommand(
+                @"INSERT INTO markpanels (""id"", time, ""position"", ""text"", coalition, updated_at)
+                        SELECT * FROM unnest(@i, @t, @p, @s, @co, @u)", conn);
+
+                /*
+                 * The following fields come directly from DCS
+                 */
+                command.Parameters.Add(new NpgsqlParameter<int[]>("i", markPanels.Select(e =>
+                    (int) e.Id).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<double[]>("t", markPanels.Select(e =>
+                    e.Time).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<Point[]>("p", markPanels.Select(e =>
+                    new Point(new Coordinate(e.Position.Longitude, e.Position.Latitude))).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<string[]>("s", markPanels.Select(e =>
+                    e.Text).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("co", markPanels.Select(e =>
+                    e.Coalition).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<DateTime[]>("u", markPanels.Select(e =>
+                    DateTime.UtcNow).ToArray()));
+
                 await command.ExecuteNonQueryAsync(scribeToken);
             }
             catch (Exception ex)

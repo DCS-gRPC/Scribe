@@ -130,5 +130,37 @@ namespace RurouniJones.DCScribe.Grpc
                 return airbases;
             }
         }
+
+        public async Task<List<MarkPanel>> GetMarkPanelsAsync()
+        {
+            using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
+            var client = new WorldService.WorldServiceClient(channel);
+
+            var markPanels = new List<MarkPanel>();
+            try
+            {
+                var response = await client.GetMarkPanelsAsync(new GetMarkPanelsRequest());
+
+                foreach (var markpanel in response.MarkPanels)
+                {
+                    markPanels.Add(new MarkPanel
+                    {
+                        Id = markpanel.Id,
+                        Time = markpanel.Time,
+                        Position = new Position(markpanel.Position.Lat, markpanel.Position.Lon),
+                        Text = markpanel.Text,
+                        Coalition = markpanel.HasCoalition ? (int) markpanel.Coalition : -1
+                    });
+                }
+
+                return markPanels;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "gRPC Exception");
+                return markPanels;
+            }
+        }
+
     }
 }
