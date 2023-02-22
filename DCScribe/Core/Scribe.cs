@@ -54,25 +54,26 @@ namespace RurouniJones.DCScribe.Core
                 var scribeToken = scribeTokenSource.Token;
 
                 // Clear the database as we start from scratch each time around
-                await _databaseClient.ClearTableAsync();
-
-                /*
-                 * A queue containing all the unit updates to be processed. We populate
-                 * this queue in a separate thread to make sure that slowdowns in unit
-                 * processing do not impact the rate at which we can receive unit updates
-                 *
-                 * We clear the queue each time we connect
-                 */
-                var queue = new ConcurrentQueue<Unit>();
-                _rpcClient.UpdateQueue = queue;
+                await _databaseClient.ClearTableAsync();                
 
                 var tasks = new[]
                 {
-                    _rpcClient.StreamUnitsAsync(scribeToken), // Get the events and put them into the queue
-                    ProcessUnitQueue(queue, scribeToken), // Process the queue events into the units dictionary
                     ProcessAirbaseUpdates(scribeToken), // Process Airbase updates by calling an APi on a timer
                     ProcessMarkPanelUpdates(scribeToken) // Process MarkPanel updates by calling an API on a long timer
                 };
+                if (GameServer.UnitStream == true) {
+                        /*
+                        * A queue containing all the unit updates to be processed. We populate
+                        * this queue in a separate thread to make sure that slowdowns in unit
+                        * processing do not impact the rate at which we can receive unit updates
+                        *
+                        * We clear the queue each time we connect
+                        */
+                        var queue = new ConcurrentQueue<Unit>();
+                        _rpcClient.UpdateQueue = queue;
+                        tasks.Append(_rpcClient.StreamUnitsAsync(scribeToken)); // Get the events and put them into the queue
+                        tasks.Append(ProcessUnitQueue(queue, scribeToken)); // Process the queue events into the units dictionary
+                }
                 await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets
                                            // disconnected on mission restart
                 _logger.LogInformation("{server} Scribe Processing stopping", GameServer.ShortName);
@@ -171,7 +172,7 @@ namespace RurouniJones.DCScribe.Core
                     _logger.LogInformation("{server} Writing {count} airbase(s) to database ", GameServer.ShortName, airbases.Count);
                     await _databaseClient.TruncateAirbasesAsync();
                     await _databaseClient.WriteAirbasesAsync(airbases, scribeToken);
-                    await Task.Delay(TimeSpan.FromSeconds(60), scribeToken);
+                    await Task.Delay(TimeSpan.FromSeconds(GetTaskTimer("ProcessAirbaseUpdates")), scribeToken);
                 } catch (Exception)
                 {
                     // No-op. Exceptions have already been logged in the task
@@ -190,12 +191,18 @@ namespace RurouniJones.DCScribe.Core
                     _logger.LogInformation("{server} Writing {count} markpanel(s) to database ", GameServer.ShortName, markPanels.Count);
                     await _databaseClient.TruncateMarkPanelsAsync();
                     await _databaseClient.WriteMarkPanelsAsync(markPanels, scribeToken);
-                    await Task.Delay(TimeSpan.FromSeconds(900), scribeToken);
+                    await Task.Delay(TimeSpan.FromSeconds(GetTaskTimer("ProcessMarkPanelUpdates")), scribeToken);
                 } catch (Exception)
                 {
                     // No-op. Exceptions have already been logged in the task
                 }
             }
+        }
+
+        private int GetTaskTimer(string taskName)
+        {
+            TaskTimer clsTask = GameServer.TaskTimers.FirstOrDefault(x => x.TaskName == taskName);
+            return (clsTask == null) ? 60 : clsTask.Timer;
         }
     }
 }
