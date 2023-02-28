@@ -25,7 +25,7 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
          */
         public int Port { get; set; }
 
-        Task StreamUnitsAsync(CancellationToken stoppingToken);
+        Task StreamUnitsAsync(uint pollRate, CancellationToken stoppingToken);
 
         Task<List<Airbase>> GetAirbasesAsync();
 
