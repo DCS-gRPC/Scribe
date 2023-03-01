@@ -62,7 +62,7 @@ namespace RurouniJones.DCScribe.Core
                     tasks.Add(ProcessAirbaseUpdates(scribeToken)); // Process Airbase updates by calling an APi on a timer
                 }
                 if (GameServer.Tasks.ProcessMarkPanelUpdates.Enabled) {
-                    tasks.Add(ProcessMarkPanelUpdates(scribeToken)); // Process MarkPanel updates by calling an API on a long timer
+                    tasks.Add(ProcessMarkPanelUpdates(scribeToken)); // Process MarkPanel updates by calling an API on timer
                 }
                 if (GameServer.Tasks.RecordUnitPositions.Enabled) {
                         /*
@@ -77,6 +77,18 @@ namespace RurouniJones.DCScribe.Core
                         var pollRate = GameServer.Tasks.RecordUnitPositions.PollRate;
                         tasks.Add(_rpcClient.StreamUnitsAsync(pollRate, scribeToken)); // Get the events and put them into the queue
                         tasks.Add(ProcessUnitQueue(queue, scribeToken)); // Process the queue events into the units dictionary
+                }
+                if (GameServer.Tasks.RecordEvents.Enabled) { // Is EventStreaming enabled in config?
+                    if (GameServer.Tasks.RecordEvents.RecordMarkPanels.Enabled) { // Are MarkPanel events to be recorded?
+                        await ProcessMarkPanelUpdates(scribeToken, false); // Get current list of markpanels already in mission
+                        var evQueue = new ConcurrentQueue<MarkPanel>();
+                        _rpcClient.MarkEventQueue = evQueue;
+                        tasks.Add(_rpcClient.StreamEventsAsync(scribeToken)); // Start streaming and handling events
+                        tasks.Add(ProcessMarkPanelQueue(evQueue,scribeToken)); // Process the eventqueue for markpanels
+                    }
+                    //
+                    // TODO: Add other event type handlers
+                    //
                 }
                 await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets
                                            // disconnected on mission restart
@@ -184,23 +196,104 @@ namespace RurouniJones.DCScribe.Core
             }
         }
 
-        private async Task ProcessMarkPanelUpdates(CancellationToken scribeToken)
+        private async Task ProcessMarkPanelUpdates(CancellationToken scribeToken, bool repeat=true)
         {
-            while (!scribeToken.IsCancellationRequested)
-            {
-                try
+            if (repeat) {
+                while (!scribeToken.IsCancellationRequested)
+                {
+                    try
+                    {
+                        var markPanels = await _rpcClient.GetMarkPanelsAsync();
+                        if (markPanels.Count == 0) continue;
+                        _logger.LogInformation("{server} Writing {count} markpanel(s) to database ", GameServer.ShortName, markPanels.Count);
+                        await _databaseClient.TruncateMarkPanelsAsync();
+                        await _databaseClient.WriteMarkPanelsAsync(markPanels, scribeToken);
+                        await Task.Delay(TimeSpan.FromSeconds(GameServer.Tasks.ProcessMarkPanelUpdates.Timer), scribeToken);
+                    } catch (Exception)
+                    {
+                        // No-op. Exceptions have already been logged in the task
+                    }
+                }
+            } else {
+                try 
                 {
                     var markPanels = await _rpcClient.GetMarkPanelsAsync();
-                    if (markPanels.Count == 0) continue;
+                    if (markPanels.Count == 0) return;
                     _logger.LogInformation("{server} Writing {count} markpanel(s) to database ", GameServer.ShortName, markPanels.Count);
                     await _databaseClient.TruncateMarkPanelsAsync();
                     await _databaseClient.WriteMarkPanelsAsync(markPanels, scribeToken);
-                    await Task.Delay(TimeSpan.FromSeconds(GameServer.Tasks.ProcessMarkPanelUpdates.Timer), scribeToken);
                 } catch (Exception)
                 {
                     // No-op. Exceptions have already been logged in the task
                 }
             }
+        }
+
+        private async Task ProcessMarkPanelQueue(ConcurrentQueue<MarkPanel> mpqueue, CancellationToken scribeToken)
+        {
+            var mpsToUpdate = new ConcurrentDictionary<uint, MarkPanel>();
+            var mpsToDelete = new List<uint>();
+            var startTime = DateTime.UtcNow;
+
+            while (!scribeToken.IsCancellationRequested)
+            {
+                mpqueue.TryDequeue(out var mp);
+                if (mp is null)
+                {
+                    await Task.Delay(5, scribeToken);
+                    continue;
+                }
+
+                if (mp.Deleted)
+                {
+                    mpsToDelete.Add(mp.Id);
+                }
+                else
+                {
+                    mpsToUpdate[mp.Id] = mp;
+                }
+
+                if (!((DateTime.UtcNow - startTime).TotalMilliseconds > (GameServer.Tasks.RecordEvents.RecordMarkPanels.Timer*1000))) continue;
+                // Every X seconds we will write the accumulated data to the database
+                try
+                {
+                    if (mpsToUpdate.Count > 0)
+                    {
+                        //var mpupdates = new MarkPanel[mpsToUpdate.Count];
+                        //mpsToUpdate.Values.CopyTo(mpupdates, 0);
+                        var mpupdates = mpsToUpdate.Values.ToList<MarkPanel>();
+                        await UpdateMarkPanelsAsync(mpupdates, scribeToken);
+                    }
+
+                    if (mpsToDelete.Count > 0)
+                    {
+                        //var mpdeletions = new uint[mpsToDelete.Count];
+                        //mpsToDelete.CopyTo(mpdeletions, 0);
+                        var mpdeletions = mpsToDelete;
+                        await DeleteMarkPanelsAsync(mpdeletions, scribeToken);
+                    }
+                    // Then clear the updates and start again
+                    mpsToUpdate = new ConcurrentDictionary<uint, MarkPanel>();
+                    mpsToDelete = new List<uint>();
+                    startTime = DateTime.UtcNow;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "{server} Error processing event queue", GameServer.ShortName);
+                }
+            }
+        }
+
+        private async Task UpdateMarkPanelsAsync(List<MarkPanel> markpanels, CancellationToken scribeToken)
+        {
+            _logger.LogInformation("{server} Writing {count} markpanel(s) to database", GameServer.ShortName, markpanels.Count);
+            await _databaseClient.UpdateMarkPanelsAsync(markpanels, scribeToken);
+        }
+
+        private async Task DeleteMarkPanelsAsync(List<uint> ids, CancellationToken scribeToken)
+        {
+            _logger.LogInformation("{server} Deleting {count} markpanel(s) from database",GameServer.ShortName, ids.Count);
+            await _databaseClient.DeleteMarkPanelsAsync(ids, scribeToken);
         }
     }
 }

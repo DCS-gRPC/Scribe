@@ -260,8 +260,8 @@ namespace RurouniJones.DCScribe.Postgres
                 conn.TypeMapper.UseNetTopologySuite(geographyAsDefault: true);
 
                 await using var command = new NpgsqlCommand(
-                @"INSERT INTO markpanels (""id"", time, ""position"", ""text"", coalition, updated_at)
-                        SELECT * FROM unnest(@i, @t, @p, @s, @co, @u)", conn);
+                @"INSERT INTO markpanels (""id"", time, ""position"", ""text"", coalition, groupid, initiator, updated_at)
+                        SELECT * FROM unnest(@i, @t, @p, @s, @co, @gr, @in, @u)", conn);
 
                 /*
                  * The following fields come directly from DCS
@@ -276,8 +276,71 @@ namespace RurouniJones.DCScribe.Postgres
                     e.Text).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<int[]>("co", markPanels.Select(e =>
                     e.Coalition).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("gr", markPanels.Select(e =>
+                    e.GroupId).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<string[]>("in", markPanels.Select(e =>
+                    e.Initiator).ToArray()));
                 command.Parameters.Add(new NpgsqlParameter<DateTime[]>("u", markPanels.Select(e =>
                     DateTime.UtcNow).ToArray()));
+
+                await command.ExecuteNonQueryAsync(scribeToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Database Exception");
+            }
+        }
+
+        public async Task UpdateMarkPanelsAsync(List<MarkPanel> markpanels, CancellationToken scribeToken)
+        {
+            try
+            {
+                await using var conn = new NpgsqlConnection(GetConnectionString());
+                await conn.OpenAsync(scribeToken);
+                conn.TypeMapper.UseNetTopologySuite(geographyAsDefault: true);
+
+                await using var command = new NpgsqlCommand(
+                @"INSERT INTO markpanels (""id"", ""position"", ""text"", coalition, groupid, initiator, updated_at)
+                        SELECT * FROM unnest(@i, @p, @t, @co, @gr, @in, @u)
+                        ON CONFLICT ON CONSTRAINT markpanels_pkey
+                        DO UPDATE SET ""position"" = EXCLUDED.position, ""text""=EXCLUDED.text, coalition=EXCLUDED.coalition, groupid=EXCLUDED.groupid, initiator=EXCLUDED.initiator, updated_at = EXCLUDED.updated_at", conn);
+
+                /*
+                 * The following fields come directly from DCS
+                 */
+                command.Parameters.Add(new NpgsqlParameter<int[]>("i", markpanels.Select(e =>
+                    (int) e.Id).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<Point[]>("p", markpanels.Select(e =>
+                    new Point(new Coordinate(e.Position.Longitude, e.Position.Latitude))).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<string[]>("t", markpanels.Select(e =>
+                    e.Text).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("co", markpanels.Select(e =>
+                    e.Coalition).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<int[]>("gr", markpanels.Select(e =>
+                    e.GroupId).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<string[]>("in", markpanels.Select(e =>
+                    e.Initiator).ToArray()));
+                command.Parameters.Add(new NpgsqlParameter<DateTime[]>("u", markpanels.Select(e =>
+                    DateTime.UtcNow).ToArray()));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Database Exception");
+            }
+        }
+
+        public async Task DeleteMarkPanelsAsync(List<uint> markpanels, CancellationToken scribeToken)
+        {
+            try
+            {
+                await using var conn = new NpgsqlConnection(GetConnectionString());
+                await conn.OpenAsync(scribeToken);
+
+                await using var command = new NpgsqlCommand(
+                    @"DELETE FROM markpanels WHERE id IN (SELECT * FROM unnest(@a))", conn);
+
+                command.Parameters.Add(new NpgsqlParameter<int[]>("a", markpanels.Select(u =>
+                    (int) u).ToArray()));
 
                 await command.ExecuteNonQueryAsync(scribeToken);
             }

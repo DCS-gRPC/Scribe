@@ -34,9 +34,17 @@ namespace RurouniJones.DCScribe.Core
     public sealed class Tasks
     {
         public RecordUnitPositions RecordUnitPositions { get;set; }
+        public RecordEvents RecordEvents { get; set; }
         public ProcessAirbaseUpdates ProcessAirbaseUpdates { get;set; }
         public ProcessMarkPanelUpdates ProcessMarkPanelUpdates { get;set; }
     }
+
+    public sealed class RecordEvents
+    {
+        public bool Enabled { get; set; }
+        public RecordMarkPanels RecordMarkPanels { get; set; }
+    }
+
     public sealed class RecordUnitPositions
     {
         public bool Enabled { get;set; }
@@ -54,5 +62,11 @@ namespace RurouniJones.DCScribe.Core
     {
         public bool Enabled { get;set; }
         public int Timer { get;set; }
+    }
+
+    public sealed class RecordMarkPanels
+    {
+        public bool Enabled { get; set; }
+        public int Timer { get; set; }
     }
 }

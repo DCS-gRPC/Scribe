@@ -15,6 +15,8 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
         */
         public ConcurrentQueue<Unit> UpdateQueue { get; set; }
 
+        public ConcurrentQueue<MarkPanel> MarkEventQueue { get; set; }
+
         /*
          * Hostname of the RPC server we are connecting to
          */
@@ -26,6 +28,8 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
         public int Port { get; set; }
 
         Task StreamUnitsAsync(uint pollRate, CancellationToken stoppingToken);
+
+        Task StreamEventsAsync(CancellationToken stoppingToken);
 
         Task<List<Airbase>> GetAirbasesAsync();
 

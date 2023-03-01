@@ -8,8 +8,9 @@ namespace RurouniJones.DCScribe.Shared.Models
         public double Time { get; init; }
         public Position Position { get; init; }
         public string Text { get; init; }
-        public Unit Initiator { get; init; }
+        public string Initiator { get; init; }
         public int Coalition { get; init; }
         public int GroupId { get; init; }
+        public bool Deleted { get;init; }
     }
 }

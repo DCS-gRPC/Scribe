@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,8 @@ namespace RurouniJones.DCScribe.Grpc
     public class RpcClient : IRpcClient
     {
         public ConcurrentQueue<Shared.Models.Unit> UpdateQueue { get; set; }
+
+        public ConcurrentQueue<Shared.Models.MarkPanel> MarkEventQueue { get;set; }
 
         public string HostName { get; set; }
         public int Port { get; set; }
@@ -97,6 +100,142 @@ namespace RurouniJones.DCScribe.Grpc
             }
         }
 
+        public async Task StreamEventsAsync(CancellationToken stoppingToken)
+        {
+            using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
+            var client = new MissionService.MissionServiceClient(channel);
+            try
+            {
+                var events = client.StreamEvents(new StreamEventsRequest(), null, null, stoppingToken);
+                await foreach (var e in events.ResponseStream.ReadAllAsync(stoppingToken))
+                {
+                    switch (e.EventCase)
+                    {
+                        case StreamEventsResponse.EventOneofCase.MarkAdd:
+                            var newMark = e.MarkAdd;
+                            _logger.LogDebug("Adding a new mark - {mark}", newMark);
+                            var newVis = newMark.VisibilityCase;
+                            _logger.LogDebug("Mark visibiliy case - {case}", newVis);
+                            var newMarkPanels = await GetMarkPanelsAsync();
+                            bool isUnit = (newMark.Initiator.InitiatorCase == Dcs.Grpc.V0.Common.Initiator.InitiatorOneofCase.Unit);
+                            var newGrp = -1; // not sure if 0 is a 'safe' value so went with -1 
+                            var newCoa = -1; // -1 is treated as 'all' for markpanel visibility so is a 'catchall' default
+                            switch (newVis)
+                            {
+                                case StreamEventsResponse.Types.MarkAddEvent.VisibilityOneofCase.Coalition:
+                                    newCoa = (int) newMark.Coalition;
+                                    break;
+                                case StreamEventsResponse.Types.MarkAddEvent.VisibilityOneofCase.GroupId:
+                                    newGrp = (int) newMark.GroupId;
+                                    break;
+                                case StreamEventsResponse.Types.MarkAddEvent.VisibilityOneofCase.None:
+                                    // No-Op? Spectator slots could have special marks/drawings?
+                                    break;
+                                default:
+                                    //No-Op because we didn't match.
+                                    _logger.LogWarning("Unexpected VisibilityCase of {case}", newVis);
+                                    break;
+                            }
+                            _logger.LogDebug("About to call enqueue for {mark}", newMark);
+                            // Get the mark position via markpanels because the Mark event payload has changed
+                            var nmp = newMarkPanels.FirstOrDefault(i => i.Id == newMark.Id);
+                            if (nmp is null) {
+                                _logger.LogDebug("Could not find a markpanel with id matching {markid}", newMark.Id);
+                                break;
+                            }
+                            var pos = new Position(nmp.Position.Latitude, nmp.Position.Longitude);
+                            _logger.LogDebug("With coa={coa}, grp={grp}, Id={i}, lat={lat} and lon={lon}", newCoa,newGrp,newMark.Id,pos.Latitude,pos.Longitude);
+                            MarkEventQueue.Enqueue(new Shared.Models.MarkPanel
+                            {
+                                Coalition = newCoa,
+                                GroupId = newGrp,
+                                Id = newMark.Id,
+                                Text = (newMark.Text is null) ? String.Empty : newMark.Text,
+                                Position = pos,
+                                Initiator = (isUnit && newMark.Initiator.Unit.HasPlayerName) ? newMark.Initiator.Unit.PlayerName : String.Empty
+                            });
+                            _logger.LogDebug("Enqueue MarkAdd event {mark}", newMark);
+                            break;
+                        case StreamEventsResponse.EventOneofCase.MarkChange:
+                            var targetMark = e.MarkChange;
+                            _logger.LogDebug("Changing a mark - {mark}", targetMark);
+                            var tgtVis = targetMark.VisibilityCase;
+                            _logger.LogDebug("Mark visibiliy case - {case}", tgtVis);
+                            var tgtMarkPanels = await GetMarkPanelsAsync();
+                            bool tgtIsUnit = (targetMark.Initiator.InitiatorCase == Dcs.Grpc.V0.Common.Initiator.InitiatorOneofCase.Unit);
+                            var tgtGrp = -1; // not sure if 0 is a 'safe' value so went with -1 
+                            var tgtCoa = -1; // -1 is treated as 'all' for markpanel visibility so is a 'catch all' default
+                            switch (tgtVis)
+                            {
+                                case StreamEventsResponse.Types.MarkChangeEvent.VisibilityOneofCase.Coalition:
+                                    tgtCoa = (int) targetMark.Coalition;
+                                    break;
+                                case StreamEventsResponse.Types.MarkChangeEvent.VisibilityOneofCase.GroupId:
+                                    tgtGrp = (int) targetMark.GroupId;
+                                    break;
+                                case StreamEventsResponse.Types.MarkChangeEvent.VisibilityOneofCase.None:
+                                    // No-Op? Spectator slots could have special marks/drawings?
+                                    break;
+                                default:
+                                    //No-Op because we didn't match.
+                                    _logger.LogWarning("Unexpected VisibilityCase of {case}", tgtVis);
+                                    break;
+                            }
+                            _logger.LogDebug("About to call enqueue for {mark}", targetMark);
+                            var tmp = tgtMarkPanels.FirstOrDefault(i => i.Id == targetMark.Id);
+                            if (tmp is null) {
+                                _logger.LogDebug("Could not find a markpanel with id matching {markid}", targetMark.Id);
+                                break;
+                            }
+                            var tgtpos = new Position(tmp.Position.Latitude, tmp.Position.Longitude);
+                            _logger.LogDebug("With coa={coa}, grp={grp}, Id={i}, lat={lat} and lon={lon}", tgtCoa,tgtGrp,targetMark.Id,tgtpos.Latitude,tgtpos.Longitude);
+                            MarkEventQueue.Enqueue(new Shared.Models.MarkPanel
+                            {
+                                Coalition = tgtCoa,
+                                GroupId = tgtGrp,
+                                Id = targetMark.Id,
+                                Text = (targetMark.Text is null) ? String.Empty : targetMark.Text,
+                                Position = tgtpos,
+                                Initiator = (tgtIsUnit && targetMark.Initiator.Unit.HasPlayerName) ? targetMark.Initiator.Unit.PlayerName : "unknown"
+                            });
+                            _logger.LogDebug("Enqueue MarkChange event {mark}", targetMark);
+                            break;
+                        case StreamEventsResponse.EventOneofCase.MarkRemove:
+                            var delMark = e.MarkRemove;
+                            MarkEventQueue.Enqueue(new Shared.Models.MarkPanel
+                            {
+                                Id = delMark.Id,
+                                Text = (delMark.Text is null) ? String.Empty : delMark.Text,
+                                Deleted = true
+                            });
+                            _logger.LogDebug("Enqueue MarkRemove event {mark}", delMark);
+                            break;
+                        //
+                        // TODO: add cases for other/all event types
+                        //
+                        default:
+                            //_logger.LogWarning("Unexpected EventCase of {case}", e.EventCase); // enable when all cases are handled.
+                            break;
+                    }
+                }
+            }
+            catch (RpcException ex)
+            {
+                if (ex.Status.StatusCode == StatusCode.Cancelled)
+                {
+                    _logger.LogInformation("Shutting down gRPC connection due to {reason}", ex.Status.Detail);
+                }
+                else
+                {
+                    _logger.LogWarning(ex, "gRPC Exception");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "gRPC Exception");
+            }
+        }
+
         public async Task<List<Airbase>> GetAirbasesAsync()
         {
             using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
@@ -148,8 +287,10 @@ namespace RurouniJones.DCScribe.Grpc
                         Id = markpanel.Id,
                         Time = markpanel.Time,
                         Position = new Position(markpanel.Position.Lat, markpanel.Position.Lon),
-                        Text = markpanel.Text,
-                        Coalition = markpanel.HasCoalition ? (int) markpanel.Coalition : -1
+                        Text = markpanel.HasText ? markpanel.Text : String.Empty,
+                        Coalition = markpanel.HasCoalition ? (int) markpanel.Coalition : -1,
+                        GroupId = markpanel.HasGroupId ? (int) markpanel.GroupId : -1,
+                        Initiator = (markpanel.Initiator is null) ? "unknown" : markpanel.Initiator.PlayerName
                     });
                 }
 
