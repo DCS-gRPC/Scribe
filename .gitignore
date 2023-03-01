@@ -363,6 +363,7 @@ FodyWeavers.xsd
 
 # Do not include any of the configurations
 configuration*.yaml
+!configuration.[Ss]ample.yaml
 
 
 .vscode/*

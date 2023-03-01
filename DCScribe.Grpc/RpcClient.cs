@@ -27,7 +27,7 @@ namespace RurouniJones.DCScribe.Grpc
             _logger = logger;
         }
 
-        public async Task StreamUnitsAsync(CancellationToken stoppingToken)
+        public async Task StreamUnitsAsync(uint pollRate, CancellationToken stoppingToken)
         {
             using var channel = GrpcChannel.ForAddress($"http://{HostName}:{Port}");
             var client = new MissionService.MissionServiceClient(channel);
@@ -35,7 +35,7 @@ namespace RurouniJones.DCScribe.Grpc
             {
                 var units = client.StreamUnits(new StreamUnitsRequest
                 {
-                    PollRate = 1,
+                    PollRate = pollRate,
                     MaxBackoff = 30
                 }, null, null, stoppingToken);
                 await foreach (var update in units.ResponseStream.ReadAllAsync(stoppingToken))

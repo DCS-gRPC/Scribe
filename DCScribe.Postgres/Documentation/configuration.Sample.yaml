@@ -1,0 +1,87 @@
+---
+# The following setup is for the logging system. For information on how to change this
+# and what other options are available see https://serilog.net/
+Serilog:
+  Using:
+    - Serilog.Sinks.File
+  MinimumLevel: 
+    Default: Information
+  Override: 
+    Microsoft: Warning
+    System: Warning
+  Enrich:
+    - FromLogContext
+    - WithProcessId
+    - WithThreadId
+  WriteTo:
+    - 
+      Name: File
+      Args:
+        path: logs/dcscribe.log
+# This is the configuration for each DCS GameServer. This Sample configuration contains
+# configuration for two separate servers. Edit the configuration below, including adding
+# or removing servers, to suit your setup.
+GameServers:
+  - # These dashes indicate a configuration record for a new GameServer
+    # Replace the following example fields with those used by your server and database
+    Name: RurouniJones Bestest Server
+    # Used in logging
+    ShortName: RBS
+    Database:
+      # Make sure you set your pg_hba.conf file if you are not connecting over localhost
+      # https://www.postgresql.org/docs/current/auth-pg-hba-conf.html
+      Host: rbs.example.com
+      Port: 5432
+      Name: rbs_database
+      Username: dcscribe
+      Password: this_is_a_password
+    # This is the configuration for connecting to the DCS-gRPC server
+    Rpc:
+      # Because DCS-gRPC runs inside the DCS process this should be your DCS server hostname
+      # or IP address
+      Host: rbs.example.com
+      # This is the default port, change it if you have changed the server-side one
+      Port: 50051
+    # Enable/disable the various DCScribe tasks and set task properties e.g. time between queries. 
+    # All time values are in seconds
+    Tasks:
+      # Record positions of units in the mission running on the DCS server. 
+      # The Timer value determines how often the unit positions are written to the database. 
+      # For best accuracy have the PollRate be half of the timer (rounded down since uint). 
+      RecordUnitPositions:
+        Enabled: true
+        PollRate: 2
+        Timer: 5
+      # Query the DCS server for a list of the airbases in the running mission
+      ProcessAirbaseUpdates:
+        Enabled: true
+        Timer: 60
+      # Query the DCS server for a list of the map marks in the running mission
+      ProcessMarkPanelUpdates:
+        Enabled: true
+        Timer: 120
+  # You can specify multiple game servers and have one DCScribe instance handle all of them
+  # This section configures a second server. Delete everything below this line to remove.
+  - 
+    Name: RurouniJones Worstest Server
+    ShortName: RWS
+    Database:
+      Host: rws.example.com
+      Port: 5432
+      Name: rws_database
+      Username: dcscribe
+      Password: this_is_a_password
+    Rpc:
+      Host: rws.example.com
+      Port: 50051
+    Tasks:
+      RecordUnitPositions:
+        Enabled: true
+        PollRate: 1
+        Timer: 2
+      ProcessAirbaseUpdates:
+        Enabled: true
+        Timer: 90
+      ProcessMarkPanelUpdates:
+        Enabled: true
+        Timer: 180
