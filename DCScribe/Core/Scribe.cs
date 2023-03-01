@@ -74,7 +74,8 @@ namespace RurouniJones.DCScribe.Core
                         */
                         var queue = new ConcurrentQueue<Unit>();
                         _rpcClient.UpdateQueue = queue;
-                        tasks.Add(_rpcClient.StreamUnitsAsync(GameServer.Tasks.RecordUnitPositions.PollRate, scribeToken)); // Get the events and put them into the queue
+                        var pollRate = GameServer.Tasks.RecordUnitPositions.PollRate;
+                        tasks.Add(_rpcClient.StreamUnitsAsync(pollRate, scribeToken)); // Get the events and put them into the queue
                         tasks.Add(ProcessUnitQueue(queue, scribeToken)); // Process the queue events into the units dictionary
                 }
                 await Task.WhenAny(tasks); // If one task finishes (usually when the RPC client gets

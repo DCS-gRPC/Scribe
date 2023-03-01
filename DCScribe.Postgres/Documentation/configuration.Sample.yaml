@@ -42,13 +42,16 @@ GameServers:
       Host: rbs.example.com
       # This is the default port, change it if you have changed the server-side one
       Port: 50051
-    # Enable/disable the various DCScribe tasks and set task properties e.g. time between queries
+    # Enable/disable the various DCScribe tasks and set task properties e.g. time between queries. 
+    # All time values are in seconds
     Tasks:
-      # Stream the units in the mission running on the DCS server
+      # Record positions of units in the mission running on the DCS server. 
+      # The Timer value determines how often the unit positions are written to the database. 
+      # For best accuracy have the PollRate be half of the timer (rounded down since uint). 
       RecordUnitPositions:
         Enabled: true
-        PollRate: 5
-        Timer: 4
+        PollRate: 2
+        Timer: 5
       # Query the DCS server for a list of the airbases in the running mission
       ProcessAirbaseUpdates:
         Enabled: true
@@ -71,11 +74,10 @@ GameServers:
     Rpc:
       Host: rws.example.com
       Port: 50051
-    UnitStream: false
     Tasks:
       RecordUnitPositions:
         Enabled: true
-        PollRate: 10
+        PollRate: 1
         Timer: 2
       ProcessAirbaseUpdates:
         Enabled: true
