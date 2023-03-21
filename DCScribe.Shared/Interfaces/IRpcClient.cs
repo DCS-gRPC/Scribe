@@ -34,5 +34,7 @@ namespace RurouniJones.DCScribe.Shared.Interfaces
         Task<List<Airbase>> GetAirbasesAsync();
 
         Task<List<MarkPanel>> GetMarkPanelsAsync();
+
+        Task<Position> GetMarkPanelPosition(uint mpid);
     }
 }

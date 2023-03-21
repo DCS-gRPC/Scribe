@@ -116,7 +116,6 @@ namespace RurouniJones.DCScribe.Grpc
                             _logger.LogDebug("Adding a new mark - {mark}", newMark);
                             var newVis = newMark.VisibilityCase;
                             _logger.LogDebug("Mark visibiliy case - {case}", newVis);
-                            var newMarkPanels = await GetMarkPanelsAsync();
                             bool isUnit = (newMark.Initiator.InitiatorCase == Dcs.Grpc.V0.Common.Initiator.InitiatorOneofCase.Unit);
                             var newGrp = -1; // not sure if 0 is a 'safe' value so went with -1 
                             var newCoa = -1; // -1 is treated as 'all' for markpanel visibility so is a 'catchall' default
@@ -137,13 +136,8 @@ namespace RurouniJones.DCScribe.Grpc
                                     break;
                             }
                             _logger.LogDebug("About to call enqueue for {mark}", newMark);
-                            // Get the mark position via markpanels because the Mark event payload has changed
-                            var nmp = newMarkPanels.FirstOrDefault(i => i.Id == newMark.Id);
-                            if (nmp is null) {
-                                _logger.LogDebug("Could not find a markpanel with id matching {markid}", newMark.Id);
-                                break;
-                            }
-                            var pos = new Position(nmp.Position.Latitude, nmp.Position.Longitude);
+                            var pos = await GetMarkPanelPosition(newMark.Id);
+                            if (pos is null) { break; }
                             _logger.LogDebug("With coa={coa}, grp={grp}, Id={i}, lat={lat} and lon={lon}", newCoa,newGrp,newMark.Id,pos.Latitude,pos.Longitude);
                             MarkEventQueue.Enqueue(new Shared.Models.MarkPanel
                             {
@@ -161,7 +155,6 @@ namespace RurouniJones.DCScribe.Grpc
                             _logger.LogDebug("Changing a mark - {mark}", targetMark);
                             var tgtVis = targetMark.VisibilityCase;
                             _logger.LogDebug("Mark visibiliy case - {case}", tgtVis);
-                            var tgtMarkPanels = await GetMarkPanelsAsync();
                             bool tgtIsUnit = (targetMark.Initiator.InitiatorCase == Dcs.Grpc.V0.Common.Initiator.InitiatorOneofCase.Unit);
                             var tgtGrp = -1; // not sure if 0 is a 'safe' value so went with -1 
                             var tgtCoa = -1; // -1 is treated as 'all' for markpanel visibility so is a 'catch all' default
@@ -182,12 +175,8 @@ namespace RurouniJones.DCScribe.Grpc
                                     break;
                             }
                             _logger.LogDebug("About to call enqueue for {mark}", targetMark);
-                            var tmp = tgtMarkPanels.FirstOrDefault(i => i.Id == targetMark.Id);
-                            if (tmp is null) {
-                                _logger.LogDebug("Could not find a markpanel with id matching {markid}", targetMark.Id);
-                                break;
-                            }
-                            var tgtpos = new Position(tmp.Position.Latitude, tmp.Position.Longitude);
+                            var tgtpos = await GetMarkPanelPosition(targetMark.Id);
+                            if (tgtpos is null) { break; }
                             _logger.LogDebug("With coa={coa}, grp={grp}, Id={i}, lat={lat} and lon={lon}", tgtCoa,tgtGrp,targetMark.Id,tgtpos.Latitude,tgtpos.Longitude);
                             MarkEventQueue.Enqueue(new Shared.Models.MarkPanel
                             {
@@ -302,6 +291,18 @@ namespace RurouniJones.DCScribe.Grpc
                 return markPanels;
             }
         }
+
+        public async Task<Position> GetMarkPanelPosition(uint mpid)
+        {
+            // Get the mark position via markpanels because the Mark event payload has changed
+            var newMarkPanels = await GetMarkPanelsAsync();            
+            var nmp = newMarkPanels.FirstOrDefault(i => i.Id == mpid);
+            if (nmp is null) {
+                _logger.LogDebug("Could not find a markpanel with id matching {markid}", mpid);
+                return null;
+            }
+            return new Position(nmp.Position.Latitude, nmp.Position.Longitude);
+        } 
 
     }
 }
