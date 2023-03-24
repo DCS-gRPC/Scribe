@@ -226,20 +226,25 @@ namespace RurouniJones.DCScribe.Core
                 mpqueue.TryDequeue(out var mp);
                 if (mp is null)
                 {
-                    await Task.Delay(5, scribeToken);
+                    if (mpsToUpdate.Count == 0 && mpsToDelete.Count == 0) {
+                        _logger.LogDebug("{server} MarkPanel queue empty - waiting 10 seconds to retry....", GameServer.ShortName);
+                        await Task.Delay(10000, scribeToken);
+                        continue;
+                    }
+                } else {
+                    if (mp.Deleted)
+                    {
+                        mpsToDelete.Add(mp.Id);
+                    }
+                    else
+                    {
+                        mpsToUpdate[mp.Id] = mp;
+                    }
+                }
+                if (!((DateTime.UtcNow - startTime).TotalMilliseconds > 40)) { // minimum 40ms between DB writes
+                    _logger.LogDebug("{server} WriteToDB timeout not exceeded - {msSinceLastUpdate} < 40", GameServer.ShortName, (DateTime.UtcNow - startTime).TotalMilliseconds);
                     continue;
                 }
-
-                if (mp.Deleted)
-                {
-                    mpsToDelete.Add(mp.Id);
-                }
-                else
-                {
-                    mpsToUpdate[mp.Id] = mp;
-                }
-
-                if (!((DateTime.UtcNow - startTime).TotalMilliseconds > (GameServer.Tasks.RecordEvents.RecordMarkPanels.Timer*1000))) continue;
                 // Every X seconds we will write the accumulated data to the database
                 try
                 {
