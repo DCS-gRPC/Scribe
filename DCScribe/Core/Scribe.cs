@@ -181,7 +181,10 @@ namespace RurouniJones.DCScribe.Core
                 try
                 {
                     var airbases = await _rpcClient.GetAirbasesAsync();
-                    if (airbases.Count == 0) continue;
+                    if (airbases.Count == 0) {
+                        await Task.Delay(TimeSpan.FromSeconds(10), scribeToken);
+                        continue;
+                    }
                     _logger.LogInformation("{server} Writing {count} airbase(s) to database ", GameServer.ShortName, airbases.Count);
                     await _databaseClient.TruncateAirbasesAsync();
                     await _databaseClient.WriteAirbasesAsync(airbases, scribeToken);
