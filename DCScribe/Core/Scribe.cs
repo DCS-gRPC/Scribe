@@ -230,8 +230,8 @@ namespace RurouniJones.DCScribe.Core
                 if (mp is null)
                 {
                     if (mpsToUpdate.Count == 0 && mpsToDelete.Count == 0) {
-                        _logger.LogDebug("{server} MarkPanel queue empty - waiting 10 seconds to retry....", GameServer.ShortName);
-                        await Task.Delay(10000, scribeToken);
+                        _logger.LogDebug("{server} MarkPanel queues empty - waiting {timer} seconds to retry....", GameServer.ShortName, GameServer.Tasks.RecordEvents.RecordMarkPanels.Timer);
+                        await Task.Delay(TimeSpan.FromSeconds(GameServer.Tasks.RecordEvents.RecordMarkPanels.Timer), scribeToken);
                         continue;
                     }
                 } else {
