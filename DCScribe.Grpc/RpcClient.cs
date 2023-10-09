@@ -115,7 +115,7 @@ namespace RurouniJones.DCScribe.Grpc
                         Callsign = airbase.Callsign,
                         Position = new Position(airbase.Position.Lat, airbase.Position.Lon),
                         Altitude = airbase.Position.Alt,
-                        Category = (Airbase.AirbaseCategory) (int) airbase.Category,
+                        Category = (Airbase.AirbaseCategory) (int) airbase.Category - 1,
                         Type = airbase.DisplayName, // "Invisible FARP", "CG Ticonderoga", "Krymsk" etc.
                         Coalition =  (int) airbase.Coalition,
                         Symbology = new MilStd2525d((int) airbase.Coalition, null) // TODO Think about how to do this. Probably based off Category
